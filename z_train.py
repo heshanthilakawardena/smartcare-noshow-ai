@@ -14,7 +14,7 @@ dagshub.init(
 )
 
 # 2. Set experiment name
-mlflow.set_experiment("Zahra_Model_Experiment")
+mlflow.set_experiment("D_tree_Model_Experiment")
 
 # Load your dataset (replace with your actual data preprocessing/dataset)
 X, y = load_iris(return_X_y=True)
