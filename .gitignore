@@ -19,5 +19,5 @@ __pycache__/
 # Jupyter Notebook Checkpoints
 .ipynb_checkpoints/
 
-# DAGsHub / MLflow local artifacts (optional)
+# DAGsHub / MLflow local artifacts 
 mlruns/
