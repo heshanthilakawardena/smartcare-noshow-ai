@@ -6,7 +6,7 @@ import sys
 def start_server():
     server_path = os.path.join(
         "server",
-        "Flask_server.py"
+        "flask_server.py"
     )
     print("SMARTCARE FLASK SERVER\n" \
     "+ Starting SmartCare Flask Server...")

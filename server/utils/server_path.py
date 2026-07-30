@@ -25,3 +25,18 @@ PREPROCESSOR_PATH = (
 )
 
 STEAMLIT = BASE_DIR / "ui" / "dashboard.py"
+
+# UI Paths
+
+TEMPLATE_PATH = (
+    BASE_DIR /
+    "ui" /
+    "template"
+)
+
+
+STATIC_PATH = (
+    BASE_DIR /
+    "ui" /
+    "static"
+)
