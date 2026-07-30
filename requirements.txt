@@ -7,3 +7,4 @@ pip install mlflow
 pip install dagshub
 pip install joblib
 pip install shap
+pip install streamlit
