@@ -25,7 +25,7 @@ dagshub.init(
 # 2. Set experiment name
 mlflow.set_experiment("smartcare-noshow-ai")
 
-# 3. Load & Preprocess Healthcare Dataset (Replaces Iris Dataset)
+# 3. Load & Preprocess Healthcare Dataset
 data_path = os.path.join("data", "smartcare_ai_dataset_1000.csv")
 X_train, X_test, y_train, y_test, preprocessor, X = load_and_preprocess_data(data_path)
 
