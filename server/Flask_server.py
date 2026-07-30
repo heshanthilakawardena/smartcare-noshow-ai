@@ -1,35 +1,51 @@
-from flask import Flask,request,jsonify, redirect
-import requests
+from flask import Flask, request, jsonify, render_template
 import pandas as pd
+
 from model_loader import (
     models,
     preprocessor
 )
 from shapAI import explain_prediction
-import subprocess
-import threading
-import time
-import webbrowser
-from utils.server_path import (STEAMLIT)
+from utils.server_path import (
+    TEMPLATE_PATH,
+    STATIC_PATH
+)
 
 
+# ==================================
+# Flask Configuration
+# ==================================
 
-app = Flask(__name__)
+app = Flask(
+    __name__,
+    template_folder=str(TEMPLATE_PATH),
+    static_folder=str(STATIC_PATH)
+)
 
 
+# ==================================
+# Home Page
+# ==================================
+
+@app.route("/")
+def home():
+
+    return render_template("index.html")
+
+
+# ==================================
+# Prediction API
+# ==================================
 
 @app.route(
     "/predict",
     methods=["POST"]
 )
-
 def predict():
-
 
     try:
 
         data = request.json
-
 
         # -------------------------
         # Select Model
@@ -40,37 +56,21 @@ def predict():
             "Logistic Regression"
         )
 
-
         if model_name not in models:
 
             return jsonify({
-
-                "error":
-                "Model not available"
-
-            }),400
-
-
+                "error": "Model not available"
+            }), 400
 
         model = models[model_name]
 
-
-
-        print(
-            f"Using model : {model_name}"
-        )
-
-
+        print(f"Using model : {model_name}")
 
         # -------------------------
         # Create DataFrame
         # -------------------------
 
-        input_df = pd.DataFrame(
-            [data]
-        )
-
-
+        input_df = pd.DataFrame([data])
 
         # -------------------------
         # Feature Engineering
@@ -100,13 +100,10 @@ def predict():
             input_df["appointment_dayofweek"] >= 5
         ).astype(int)
 
-
-        # Remove original date column if it was dropped during training
         input_df.drop(
             columns=["appointment_date"],
             inplace=True
         )
-
 
         # -------------------------
         # Preprocessing
@@ -116,8 +113,6 @@ def predict():
             input_df
         )
 
-
-
         # -------------------------
         # Prediction
         # -------------------------
@@ -126,132 +121,62 @@ def predict():
             processed
         )[0][1]
 
-
         prediction = model.predict(
             processed
         )[0]
-
-
 
         # -------------------------
         # SHAP
         # -------------------------
 
         explanation = explain_prediction(
-
             model,
-
             model_name,
-
             processed,
-
             preprocessor.get_feature_names_out()
-
         )
-
-
 
         return jsonify({
 
-            "model":
-            model_name,
+            "model": model_name,
 
+            "prediction": int(prediction),
 
-            "prediction":
-            int(prediction),
+            "probability": float(probability),
 
-
-            "probability":
-            float(probability),
-
-
-            "risk":
-
-            (
+            "risk": (
                 "High Risk"
-                if probability >=0.65
-
+                if probability >= 0.65
                 else
-
                 "Medium Risk"
-                if probability >=0.40
-
+                if probability >= 0.40
                 else
-
                 "Low Risk"
             ),
 
-
-            "explanation":
-            explanation
+            "explanation": explanation
 
         })
 
-
-
     except Exception as e:
-
 
         return jsonify({
 
-            "error":
-            str(e)
+            "error": str(e)
 
-        }),500
-
-# ==================================
-# Home Redirect
-# ==================================
-
-@app.route("/")
-def home():
-
-    return redirect(
-        "http://localhost:8501"
-    )
+        }), 500
 
 
 # ==================================
-# Start Streamlit Automatically
+# Run Flask
 # ==================================
 
-def start_streamlit():
+if __name__ == "__main__":
 
-    print(f"Starting Streamlit from: {STEAMLIT}")
-
-    subprocess.Popen(
-        [
-            "streamlit",
-            "run",
-            str(STEAMLIT)
-        ]
-    )
-
-    time.sleep(5)
-    webbrowser.open("http://localhost:8501")
-
-
-
-if __name__=="__main__":
-
-
-    print(
-        "🚀 Starting SmartCare Streamlit UI..."
-    )
-
-
-    threading.Thread(
-        target=start_streamlit,
-        daemon=True
-    ).start()
-
-
-    print(
-        "🚀 Starting Flask API Server..."
-    )
-
+    print("🚀 Starting SmartCare Web Server...")
 
     app.run(
         host="127.0.0.1",
-        port=5000
+        port=5000,
+        debug=True
     )

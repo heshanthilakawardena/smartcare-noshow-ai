@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartCare Hospital AI - Appointment No-Show Predictor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="dark-theme">
+
+    <!-- Top Navigation Bar -->
+    <nav class="top-navbar">
+        <div class="nav-brand">
+            <i class="fa-solid fa-hospital-user brand-icon"></i>
+            <span class="brand-name">SmartCare Hospital</span>
+        </div>
+        <div class="nav-actions">
+            <button type="button" id="theme-toggle-btn" class="theme-toggle-btn" title="Toggle Light/Dark Theme">
+                <i class="fa-solid fa-moon icon-moon"></i>
+                <i class="fa-solid fa-sun icon-sun"></i>
+                <span id="theme-toggle-text">Dark Mode</span>
+            </button>
+        </div>
+    </nav>
+
+    <div class="container">
+
+        <!-- Header -->
+        <header class="dashboard-header">
+            <h1 class="main-title">
+                🏥 SmartCare Hospital AI Appointment No-Show Predictor
+            </h1>
+        </header>
+
+        <!-- Prediction Form -->
+        <form id="prediction-form">
+
+            <!--
+                LAYOUT:
+                Left col (1/4 width): Patient Info + Appointment Details stacked
+                Right col (3/4 width): Medical Info + Billing Info side-by-side
+            -->
+            <div class="form-layout">
+
+                <!-- LEFT COLUMN (1/4): Patient + Appointment stacked -->
+                <div class="left-col">
+
+                    <!-- 1. Patient Information Card -->
+                    <div class="section-card">
+                        <div class="section-header">
+                            <i class="fa-solid fa-user section-icon"></i> Patient Information
+                        </div>
+                        <div class="card-form-grid">
+                            <div class="form-group">
+                                <label for="age">Age</label>
+                                <input type="number" id="age" class="form-control" min="0" max="100" value="40" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="gender">Gender</label>
+                                <select id="gender" class="form-control" required>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="blood_group">Blood Group</label>
+                                <select id="blood_group" class="form-control" required>
+                                    <option value="A+">A+</option>
+                                    <option value="A-">A-</option>
+                                    <option value="B+">B+</option>
+                                    <option value="B-">B-</option>
+                                    <option value="O+" selected>O+</option>
+                                    <option value="O-">O-</option>
+                                    <option value="AB+">AB+</option>
+                                    <option value="AB-">AB-</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. Appointment Details Card (below Patient Info) -->
+                    <div class="section-card">
+                        <div class="section-header">
+                            <i class="fa-solid fa-calendar-days section-icon"></i> Appointment Details
+                        </div>
+                        <div class="card-form-grid">
+                            <div class="form-group">
+                                <label for="department">Department</label>
+                                <select id="department" class="form-control" required>
+                                    <option value="Cardiology">Cardiology</option>
+                                    <option value="Neurology">Neurology</option>
+                                    <option value="General Medicine" selected>General Medicine</option>
+                                    <option value="Orthopedics">Orthopedics</option>
+                                    <option value="Dermatology">Dermatology</option>
+                                    <option value="ENT">ENT</option>
+                                    <option value="Pediatrics">Pediatrics</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="appointment_date">Appointment Date</label>
+                                <input type="date" id="appointment_date" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="diagnosis">Diagnosis</label>
+                                <select id="diagnosis" class="form-control" required>
+                                    <option value="Diabetes">Diabetes</option>
+                                    <option value="Hypertension" selected>Hypertension</option>
+                                    <option value="Migraine">Migraine</option>
+                                    <option value="Asthma">Asthma</option>
+                                    <option value="Back Pain">Back Pain</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="waiting_days">Waiting Days</label>
+                                <input type="number" id="waiting_days" class="form-control" min="0" max="365" value="5" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="previous_appointments">Previous Appointments</label>
+                                <input type="number" id="previous_appointments" class="form-control" min="0" max="100" value="2" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="missed_previous_appointments">Missed Appointments</label>
+                                <input type="number" id="missed_previous_appointments" class="form-control" min="0" max="100" value="0" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="appointment_status">Status</label>
+                                <select id="appointment_status" class="form-control" required>
+                                    <option value="Scheduled" selected>Scheduled</option>
+                                    <option value="Completed">Completed</option>
+                                    <option value="Cancelled">Cancelled</option>
+                                    <option value="No-Show">No-Show</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                </div><!-- /left-col -->
+
+                <!-- RIGHT COLUMN (3/4): Medical + Billing side-by-side -->
+                <div class="right-col">
+
+                    <!-- Right sub-row: Medical + Billing at same level -->
+                    <div class="right-sub-row">
+
+                        <!-- 3. Medical Information Card -->
+                        <div class="section-card right-card">
+                            <div class="section-header">
+                                <i class="fa-solid fa-stethoscope section-icon"></i> Medical Information
+                            </div>
+                            <div class="card-form-grid medical-grid">
+                                <div class="form-group">
+                                    <label for="admitted">Admitted</label>
+                                    <select id="admitted" class="form-control" required>
+                                        <option value="0" selected>0 (No)</option>
+                                        <option value="1">1 (Yes)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="room_type">Room Type</label>
+                                    <select id="room_type" class="form-control" required>
+                                        <option value="General" selected>General</option>
+                                        <option value="Private">Private</option>
+                                        <option value="ICU">ICU</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="length_of_stay_days">Stay Days</label>
+                                    <input type="number" id="length_of_stay_days" class="form-control" min="0" max="365" value="0" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="previous_admissions">Prev Admissions</label>
+                                    <input type="number" id="previous_admissions" class="form-control" min="0" max="100" value="0" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="systolic_bp">Systolic BP</label>
+                                    <input type="number" id="systolic_bp" class="form-control" min="50" max="250" value="120" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="diastolic_bp">Diastolic BP</label>
+                                    <input type="number" id="diastolic_bp" class="form-control" min="30" max="150" value="80" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="blood_sugar_mg_dl">Blood Sugar (mg/dL)</label>
+                                    <input type="number" id="blood_sugar_mg_dl" class="form-control" min="50" max="500" value="100" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="cholesterol_mg_dl">Cholesterol (mg/dL)</label>
+                                    <input type="number" id="cholesterol_mg_dl" class="form-control" min="50" max="500" value="180" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="bmi">BMI</label>
+                                    <input type="number" id="bmi" class="form-control" step="0.1" min="10.0" max="60.0" value="25.0" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="lab_tests_count">Lab Tests</label>
+                                    <input type="number" id="lab_tests_count" class="form-control" min="0" max="100" value="1" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="treatments_count">Treatments</label>
+                                    <input type="number" id="treatments_count" class="form-control" min="0" max="100" value="1" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 4. Billing Information Card -->
+                        <div class="section-card right-card">
+                            <div class="section-header">
+                                <i class="fa-solid fa-credit-card section-icon"></i> Billing Information
+                            </div>
+                            <div class="card-form-grid billing-grid">
+                                <div class="form-group">
+                                    <label for="consultation_fee_lkr">Consult Fee (LKR)</label>
+                                    <input type="number" id="consultation_fee_lkr" class="form-control" min="0" max="500000" value="2000" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="room_charge_lkr">Room Charge (LKR)</label>
+                                    <input type="number" id="room_charge_lkr" class="form-control" min="0" max="500000" value="0" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="lab_charge_lkr">Lab Charge (LKR)</label>
+                                    <input type="number" id="lab_charge_lkr" class="form-control" min="0" max="500000" value="0" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="medicine_charge_lkr">Med Charge (LKR)</label>
+                                    <input type="number" id="medicine_charge_lkr" class="form-control" min="0" max="500000" value="1000" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="total_bill_lkr">Total Bill (LKR)</label>
+                                    <input type="number" id="total_bill_lkr" class="form-control" min="0" max="1000000" value="3000" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="payment_status">Payment Status</label>
+                                    <select id="payment_status" class="form-control" required>
+                                        <option value="Paid" selected>Paid</option>
+                                        <option value="Partially Paid">Partially Paid</option>
+                                        <option value="Unpaid">Unpaid</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="payment_method">Payment Method</label>
+                                    <select id="payment_method" class="form-control" required>
+                                        <option value="Cash" selected>Cash</option>
+                                        <option value="Card">Card</option>
+                                        <option value="Insurance">Insurance</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div><!-- /right-sub-row -->
+                </div><!-- /right-col -->
+
+            </div><!-- /form-layout -->
+
+            <!-- Control Bar AFTER all data sections: Model + Autofill + Predict -->
+            <div class="section-card control-bar-card">
+                <div class="control-bar-inner">
+                    <div class="control-group model-select-group">
+                        <label for="model-select" class="control-label">
+                            <i class="fa-solid fa-robot"></i> Model
+                        </label>
+                        <select id="model-select" name="model" class="form-control select-model">
+                            <option value="Logistic Regression" selected>Logistic Regression</option>
+                            <option value="KNN">KNN Model</option>
+                        </select>
+                    </div>
+
+                    <button type="button" id="btn-fill-demo" class="btn-action btn-demo">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> Auto-fill Sample Data
+                    </button>
+
+                    <button type="submit" id="btn-submit" class="btn-action btn-submit">
+                        <span id="btn-spinner" class="spinner"></span>
+                        <span id="btn-text">🚀 Predict No-Show Risk</span>
+                    </button>
+                </div>
+            </div>
+
+        </form>
+
+        <!-- Error Alert -->
+        <div id="error-alert" class="error-alert"></div>
+
+        <!-- Output & Prediction Results Panel -->
+        <div id="results-panel" class="section-card results-panel">
+            <div class="section-header">
+                <i class="fa-solid fa-chart-pie section-icon"></i> Prediction Result
+                <span id="output-model-badge" class="model-badge-inline"></span>
+            </div>
+
+            <div class="result-display-row">
+
+                <!-- Circular Progress Gauge -->
+                <div class="circle-gauge-container">
+                    <svg class="circle-gauge-svg" viewBox="0 0 120 120">
+                        <circle class="circle-bg" cx="60" cy="60" r="50"></circle>
+                        <circle id="circle-progress" class="circle-fill" cx="60" cy="60" r="50"></circle>
+                    </svg>
+                    <div class="circle-content">
+                        <span id="circle-percent" class="circle-percent">0%</span>
+                        <span id="circle-risk-text" class="circle-risk-text">LOW</span>
+                    </div>
+                </div>
+
+                <!-- Right Side Recommendation Text -->
+                <div class="result-text-container">
+                    <h3 id="result-status-title" class="result-status-title">Low Risk</h3>
+                    <p id="result-description" class="result-description">
+                        Low Risk — Patient generally comes for clinic.
+                    </p>
+                </div>
+
+            </div>
+
+            <!-- SHAP Explainable AI Output -->
+            <div class="shap-container">
+                <h4 class="shap-title">
+                    <i class="fa-solid fa-magnifying-glass-chart"></i> SHAP Explainable AI Result
+                </h4>
+                <div id="shap-list" class="shap-list"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
