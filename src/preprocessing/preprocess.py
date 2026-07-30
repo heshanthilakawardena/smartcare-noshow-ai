@@ -4,11 +4,8 @@ from sklearn.preprocessing import (
     OneHotEncoder,
     OrdinalEncoder
 )
-
 from sklearn.compose import ColumnTransformer
-
 from pathlib import Path
-
 import pandas as pd
 import joblib
 
