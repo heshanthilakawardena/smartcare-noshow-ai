@@ -15,7 +15,7 @@ Our AI-powered prediction system uses Machine Learning models such as Logistic R
 - Download Code
 - Run code in terminal
   ```
-  python server.py
+  python app.py
   ```
 
 # Logistic Regression Model

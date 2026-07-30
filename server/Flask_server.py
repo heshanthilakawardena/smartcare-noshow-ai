@@ -4,9 +4,12 @@ from model_loader import (
     models,
     preprocessor
 )
-
-
 from shap import explain_prediction
+import subprocess
+import threading
+import time
+import webbrowser
+import os
 
 
 
@@ -159,11 +162,65 @@ def predict():
 
         }),500
 
+# ==================================
+# Start Streamlit Automatically
+# ==================================
+
+def start_streamlit():
+
+    streamlit_file = os.path.join(
+        "..",
+        "ui",
+        "dashboard.py"
+    )
+
+
+    subprocess.Popen(
+
+        [
+            "streamlit",
+            "run",
+            streamlit_file
+        ],
+
+        shell=True
+
+    )
+
+
+    # Wait until Streamlit starts
+    time.sleep(5)
+
+
+    # Open browser automatically
+    webbrowser.open(
+        "http://localhost:8501"
+    )
+
 
 
 
 
 if __name__=="__main__":
+
+
+    print(
+        "🚀 Starting SmartCare Streamlit UI..."
+    )
+
+
+    threading.Thread(
+
+        target=start_streamlit
+
+    ).start()
+
+
+
+    print(
+        "🚀 Starting Flask API Server..."
+    )
+
 
     app.run(
 
