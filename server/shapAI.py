@@ -29,21 +29,24 @@ def explain_prediction(
 
     else:
 
-
         explainer = shap.KernelExplainer(
-
             model.predict_proba,
-
             processed_input
-
         )
 
+        try:
+            # New SHAP versions
+            shap_values = explainer(processed_input)
+            values = shap_values.values[0, :, 1]
 
-        values = explainer.shap_values(
+        except Exception:
+            # Older SHAP versions
+            shap_values = explainer.shap_values(processed_input)
 
-            processed_input
-
-        )[1][0]
+            if isinstance(shap_values, list):
+                values = shap_values[1][0]
+            else:
+                values = shap_values[0]
 
 
 

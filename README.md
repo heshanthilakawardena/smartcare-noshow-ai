@@ -13,6 +13,10 @@ Our AI-powered prediction system uses Machine Learning models such as Logistic R
 
 ### Usage
 - Download Code
+- Install Esenntial libraries      
+  ```
+  pip install requirements.txt
+  ```
 - Run code in terminal
   ```
   python app.py
@@ -34,7 +38,7 @@ Our AI-powered prediction system uses Machine Learning models such as Logistic R
 ### ROC
 ![Model Confustion mattrix](reports/KNN/roc_curve.png)
 
-## System Architecture
+# System Architecture
 
 ```
                  User
@@ -70,3 +74,5 @@ Our AI-powered prediction system uses Machine Learning models such as Logistic R
                   ↓
           Result back to UI
 ```
+
+# THANK YOU !!
