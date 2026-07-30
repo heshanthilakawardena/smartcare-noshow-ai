@@ -13,4 +13,5 @@ venv/
 # Data
 data/
 models/
+*.joblib
 classification_report.txt

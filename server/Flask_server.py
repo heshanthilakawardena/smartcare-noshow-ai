@@ -1,15 +1,16 @@
-from flask import Flask,request,jsonify
+from flask import Flask,request,jsonify, redirect
+import requests
 import pandas as pd
 from model_loader import (
     models,
     preprocessor
 )
-from shap import explain_prediction
+from shapAI import explain_prediction
 import subprocess
 import threading
 import time
 import webbrowser
-import os
+from utils.server_path import (STEAMLIT)
 
 
 
@@ -69,6 +70,42 @@ def predict():
             [data]
         )
 
+
+
+        # -------------------------
+        # Feature Engineering
+        # -------------------------
+
+        input_df["appointment_date"] = pd.to_datetime(
+            input_df["appointment_date"]
+        )
+
+        input_df["appointment_year"] = (
+            input_df["appointment_date"].dt.year
+        )
+
+        input_df["appointment_month"] = (
+            input_df["appointment_date"].dt.month
+        )
+
+        input_df["appointment_day"] = (
+            input_df["appointment_date"].dt.day
+        )
+
+        input_df["appointment_dayofweek"] = (
+            input_df["appointment_date"].dt.dayofweek
+        )
+
+        input_df["appointment_weekend"] = (
+            input_df["appointment_dayofweek"] >= 5
+        ).astype(int)
+
+
+        # Remove original date column if it was dropped during training
+        input_df.drop(
+            columns=["appointment_date"],
+            inplace=True
+        )
 
 
         # -------------------------
@@ -163,41 +200,35 @@ def predict():
         }),500
 
 # ==================================
+# Home Redirect
+# ==================================
+
+@app.route("/")
+def home():
+
+    return redirect(
+        "http://localhost:8501"
+    )
+
+
+# ==================================
 # Start Streamlit Automatically
 # ==================================
 
 def start_streamlit():
 
-    streamlit_file = os.path.join(
-        "..",
-        "ui",
-        "dashboard.py"
-    )
-
+    print(f"Starting Streamlit from: {STEAMLIT}")
 
     subprocess.Popen(
-
         [
             "streamlit",
             "run",
-            streamlit_file
-        ],
-
-        shell=True
-
+            str(STEAMLIT)
+        ]
     )
 
-
-    # Wait until Streamlit starts
     time.sleep(5)
-
-
-    # Open browser automatically
-    webbrowser.open(
-        "http://localhost:8501"
-    )
-
-
+    webbrowser.open("http://localhost:8501")
 
 
 
@@ -210,11 +241,9 @@ if __name__=="__main__":
 
 
     threading.Thread(
-
-        target=start_streamlit
-
+        target=start_streamlit,
+        daemon=True
     ).start()
-
 
 
     print(
@@ -223,9 +252,6 @@ if __name__=="__main__":
 
 
     app.run(
-
-        host="0.0.0.0",
-
+        host="127.0.0.1",
         port=5000
-
     )

@@ -1,30 +1,10 @@
 import joblib
 from pathlib import Path
-from utils.path import MODEL_PATH
-
-
-# ==========================
-# Model Paths
-# ==========================
-
-LOGISTIC_PATH = (
-    MODEL_PATH /
-    "Smartcare_Logistic_Regression_Model.joblib"
+from utils.server_path import (
+    LOGISTIC_MODEL_PATH,
+    KNN_MODEL_PATH,
+    PREPROCESSOR_PATH
 )
-
-
-KNN_PATH = (
-    MODEL_PATH /
-    "Smartcare_KNN_Model.joblib"
-)
-
-
-PREPROCESSOR_PATH = (
-    MODEL_PATH /
-    "Smartcare_Preprocessor.joblib"
-)
-
-
 
 # ==========================
 # Load Models
@@ -36,11 +16,11 @@ print("Loading Models...")
 models = {
 
     "Logistic Regression":
-        joblib.load(LOGISTIC_PATH),
+        joblib.load(LOGISTIC_MODEL_PATH),
 
 
     "KNN":
-        joblib.load(KNN_PATH)
+        joblib.load(KNN_MODEL_PATH)
 
 }
 
@@ -48,6 +28,7 @@ models = {
 
 print("✅ Logistic Regression Loaded")
 print("✅ KNN Loaded")
+print("Classes:", models["KNN"].classes_)
 
 
 
