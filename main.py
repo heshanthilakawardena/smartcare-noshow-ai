@@ -1,7 +1,8 @@
 from utils.path import (
     RAW_DATA_PATH,
     MODEL_PATH,
-    REPORT_PATH,
+    LOGI_REPORT_PATH,
+    KNN_REPORT_PATH,
     PROCESSED_DATA_PATH
 )
 from src.preprocessing.LoadData import LoadData
@@ -89,11 +90,9 @@ def TrainingPipeline():
             y
 
         ) = PrepareData(
-
             df,
-
-            PROCESSED_DATA_PATH
-
+            PROCESSED_DATA_PATH,
+            MODEL_PATH
         )
 
     Path(MODEL_PATH).mkdir(
@@ -129,7 +128,7 @@ def TrainingPipeline():
         logistic_model,
         X_test,
         y_test,
-        REPORT_PATH
+        LOGI_REPORT_PATH
     )
 
     print("+ MLFlow Tracking logistic regression model\n")
@@ -139,7 +138,7 @@ def TrainingPipeline():
     MLflowTracker(
         model_name="Smartcare_Logistic_Regression_Model",
         metrics=logistic_metrics,
-        REPORT_PATH=Path(REPORT_PATH) / "Logistic_Regression",
+        REPORT_PATH=LOGI_REPORT_PATH,
         MODEL_PATH=MODEL_PATH
     )
 
@@ -159,7 +158,7 @@ def TrainingPipeline():
         knn_model,
         X_test,
         y_test,
-        REPORT_PATH
+        KNN_REPORT_PATH
     )
 
     print("+ MLFlow Tracking KNN model\n")
@@ -168,7 +167,7 @@ def TrainingPipeline():
     MLflowTracker(
         model_name="Smartcare_KNN_Model",
         metrics=knn_metrics,
-        REPORT_PATH=Path(REPORT_PATH) / "KNN",
+        REPORT_PATH=KNN_REPORT_PATH,
         MODEL_PATH=MODEL_PATH
     )
 
