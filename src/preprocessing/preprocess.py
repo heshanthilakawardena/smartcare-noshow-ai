@@ -1,210 +1,429 @@
-from utils.path import (
-    RAW_DATA_PATH,
-    MODEL_PATH,
-    REPORT_PATH,
-    PROCESSED_DATA_PATH
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import (
+    StandardScaler,
+    OneHotEncoder,
+    OrdinalEncoder
 )
 
-from src.preprocessing.LoadData import LoadData
-from src.preprocessing.CleanData import CleanData
+from sklearn.compose import ColumnTransformer
 
-from src.preprocessing.preprocess import PrepareData
+from pathlib import Path
 
-from src.preprocessing.SaveObjects import (
-    load_processed_data,
-    processed_data_exists,
-)
-
-from src.training.train import TrainModel
-from src.training.evaluate import EvaluateModel
-
-from utils.mlflow_tracker import MLflowTracker
+import pandas as pd
+import joblib
 
 
 
-def TrainingPipeline():
+def PrepareData(df, processed_data_path, model_path):
+
+
+    print("\n+ Starting Data Preparation...\n")
+
+
+    # -----------------------------
+    # Clean Column Names
+    # -----------------------------
+
+    df.columns = (
+        df.columns
+        .str.strip()
+    )
+
+
+
+    # -----------------------------
+    # Remove Unnecessary Columns
+    # -----------------------------
+
+    remove_columns = [
+
+        "readmitted_30_days",
+
+        "disease_risk_level"
+
+    ]
+
+
+    df.drop(
+
+        columns=[
+            col for col in remove_columns
+            if col in df.columns
+        ],
+
+        inplace=True
+
+    )
+
+
+
+    # -----------------------------
+    # Appointment Date Feature Engineering
+    # -----------------------------
+
+
+    df["appointment_date"] = pd.to_datetime(
+
+        df["appointment_date"]
+
+    )
+
+
+    df["appointment_year"] = (
+
+        df["appointment_date"]
+        .dt.year
+
+    )
+
+
+    df["appointment_month"] = (
+
+        df["appointment_date"]
+        .dt.month
+
+    )
+
+
+    df["appointment_day"] = (
+
+        df["appointment_date"]
+        .dt.day
+
+    )
+
+
+    df["appointment_dayofweek"] = (
+
+        df["appointment_date"]
+        .dt.dayofweek
+
+    )
+
+
+    df["appointment_weekend"] = (
+
+        df["appointment_dayofweek"] >= 5
+
+    ).astype(int)
+
+
+
+    # Remove original date
+
+    df.drop(
+
+        columns=["appointment_date"],
+
+        inplace=True
+
+    )
+
+
+
+    # -----------------------------
+    # Save Processed Dataset
+    # -----------------------------
+
+    save_processed_data(
+
+        df,
+
+        processed_data_path
+
+    )
+
+
+
+    # -----------------------------
+    # Split Features and Label
+    # -----------------------------
+
+
+    X = df.drop(
+
+        "Label",
+
+        axis=1
+
+    )
+
+
+    y = df["Label"]
+
 
 
     print(
-        "-----------------------------\n"
-        "TRAINING PIPELINE ONLINE\n"
-        "-----------------------------\n"
+        "Classes:",
+        y.value_counts()
     )
-    #Load Existing Processed Data
-    if processed_data_exists(PROCESSED_DATA_PATH):
-
-        print(
-            "+ PROCESSED DATA FOUND\n"
-            "+ LOADING PROCESSED DATA\n"
-        )
-
-
-        X, y = load_processed_data(
-            PROCESSED_DATA_PATH
-        )
-
-
-        # PrepareData should handle
-        # encoding + scaling
-        (
-            X_train,
-            X_test,
-            y_train,
-            y_test,
-            preprocessor,
-            X,
-            y
-
-        ) = PrepareData(
-            X.assign(Label=y),
-            PROCESSED_DATA_PATH
-        )
-
-    else:
-
-
-        print(
-            "-----------------------------\n"
-            "LOADING CSV FILE\n"
-            "-----------------------------\n"
-        )
-
-        df = LoadData(RAW_DATA_PATH)
-
-        print(
-            "-----------------------------\n"
-            "CLEANING DATA\n"
-            "-----------------------------\n"
-        )
-
-        df = CleanData(df)
 
 
 
-        print(
-            "-----------------------------\n"
-            "PREPARING DATA\n"
-            "-----------------------------\n"
-        )
+    # -----------------------------
+    # Encoding Columns
+    # -----------------------------
 
 
-        (
-            X_train,
-            X_test,
-            y_train,
-            y_test,
-            preprocessor,
-            X,
-            y
+    onehot_columns = [
 
-        ) = PrepareData(
+        "gender",
 
-            df,
+        "blood_group",
 
-            PROCESSED_DATA_PATH
+        "department",
 
-        )
+        "diagnosis",
+
+        "room_type",
+
+        "payment_method"
+
+    ]
 
 
 
-    # ==================================
+    ordinal_columns = [
+
+        "appointment_status",
+
+        "payment_status"
+
+    ]
+
+
+
+    numeric_columns = [
+
+        col for col in X.columns
+
+        if col not in
+        onehot_columns + ordinal_columns
+
+    ]
+
+
+
+    # -----------------------------
+    # Category Order
+    # -----------------------------
+
+
+    appointment_order = [
+
+        "Scheduled",
+
+        "Completed",
+
+        "Cancelled",
+
+        "No-Show"
+
+    ]
+
+
+
+    payment_order = [
+
+        "Paid",
+
+        "Partially Paid",
+
+        "Unpaid"
+
+    ]
+
+
+
+    # -----------------------------
+    # Preprocessor
+    # -----------------------------
+
+
+    preprocessor = ColumnTransformer(
+
+        transformers=[
+
+
+            (
+
+                "onehot",
+
+                OneHotEncoder(
+
+                    handle_unknown="ignore"
+
+                ),
+
+                onehot_columns
+
+            ),
+
+
+
+            (
+
+                "ordinal",
+
+                OrdinalEncoder(
+
+                    categories=[
+
+                        appointment_order,
+
+                        payment_order
+
+                    ]
+
+                ),
+
+                ordinal_columns
+
+            ),
+
+
+
+            (
+
+                "numeric",
+
+                StandardScaler(),
+
+                numeric_columns
+
+            )
+
+        ]
+
+    )
+
+
+
+    # -----------------------------
+    # Train Test Split
+    # -----------------------------
+
+
+    X_train, X_test, y_train, y_test = train_test_split(
+
+        X,
+
+        y,
+
+        test_size=0.2,
+
+        random_state=42,
+
+        stratify=y
+
+    )
+
+
+
+    # -----------------------------
+    # Fit preprocessing ONLY TRAIN
+    # -----------------------------
+
+
+    X_train = preprocessor.fit_transform(
+
+        X_train
+
+    )
+
+
+    X_test = preprocessor.transform(
+
+        X_test
+
+    )
+
+
+
+    # -----------------------------
     # Save Preprocessor
-    # ==================================
+    # -----------------------------
 
-    import joblib
+
+    model_path = Path(model_path)
+
+
+    model_path.mkdir(
+
+        parents=True,
+
+        exist_ok=True
+
+    )
+
 
     joblib.dump(
 
         preprocessor,
 
-        "models/Smartcare_Preprocessor.joblib"
+        model_path /
+
+        "Smartcare_Preprocessor.joblib"
 
     )
 
 
-
-    # ==================================
-    # Train Model
-    # ==================================
 
     print(
-        "-----------------------------\n"
-        "TRAINING LOGISTIC REGRESSION MODEL\n"
-        "-----------------------------\n"
+        "\n+ Data Preparation Completed"
     )
 
 
-    model = TrainModel(
+
+    return (
 
         X_train,
 
-        y_train,
-
-        MODEL_PATH
-
-    )
-
-
-
-    # ==================================
-    # Evaluation
-    # ==================================
-
-    print(
-        "-----------------------------\n"
-        "EVALUATING MODEL\n"
-        "-----------------------------\n"
-    )
-
-
-    metrics = EvaluateModel(
-
-        model,
-
         X_test,
+
+        y_train,
 
         y_test,
 
-        REPORT_PATH
+        preprocessor,
+
+        X,
+
+        y
 
     )
 
 
 
-    # ==================================
-    # MLflow Tracking
-    # ==================================
+
+
+def save_processed_data(df, path):
+
+
+    path = Path(path)
+
+
+    path.mkdir(
+
+        parents=True,
+
+        exist_ok=True
+
+    )
+
+
+
+    df.to_csv(
+
+        path /
+
+        "smartcare_processed_dataset.csv",
+
+        index=False
+
+    )
+
 
     print(
-        "-----------------------------\n"
-        "TRACKING MODEL WITH MLFLOW\n"
-        "-----------------------------\n"
+        "+ Processed dataset saved"
     )
-
-
-    MLflowTracker(
-
-        model_name="Smartcare_Logistic_Regression_Model",
-
-        metrics=metrics,
-
-        REPORT_PATH=REPORT_PATH,
-
-        MODEL_PATH=MODEL_PATH
-
-    )
-
-
-
-    print(
-        "-----------------------------\n"
-        "LOGISTIC REGRESSION TRAINING COMPLETED\n"
-        "PIPELINE COMPLETED SUCCESSFULLY\n"
-        "-----------------------------"
-    )
-
-
-
-if __name__ == "__main__":
-
-    TrainingPipeline()
