@@ -25,18 +25,18 @@ Our AI-powered prediction system uses Machine Learning models such as Logistic R
 # Logistic Regression Model
 
 ### Confusion Matrix
-![Model Confustion mattrix](reports/Logistic_Regression/confusion_matrix.png)
+![Model Confustion mattrix](training/logistic_and_knn/reports/Logistic_Regression/confusion_matrix.png)
 
 ### ROC
-![Model Confustion mattrix](reports/Logistic_Regression/roc_curve.png)
+![Model Confustion mattrix](training/logistic_and_knn/reports/Logistic_Regression/roc_curve.png)
 
-# Logistic Regression Model
+# KNN Model
 
 ### Confusion Matrix
-![Model Confustion mattrix](reports/KNN/confusion_matrix.png)
+![Model Confustion mattrix](training/logistic_and_knn/reports/KNN/confusion_matrix.png)
 
 ### ROC
-![Model Confustion mattrix](reports/KNN/roc_curve.png)
+![Model Confustion mattrix](training/logistic_and_knn/reports/KNN/roc_curve.png)
 
 # System Architecture
 
