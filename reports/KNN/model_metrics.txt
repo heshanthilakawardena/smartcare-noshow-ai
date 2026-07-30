@@ -1,0 +1,7 @@
+========== KNN Evaluation ==========
+
+accuracy: 0.7368
+precision: 0.6923
+recall: 0.9000
+f1_score: 0.7826
+roc_auc: 0.7778
