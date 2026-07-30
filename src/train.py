@@ -1,68 +1,104 @@
 import os
 import joblib
+import pandas as pd
 import mlflow
 import mlflow.sklearn
 import dagshub
-from sklearn.pipeline import Pipeline
+
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.tree import DecisionTreeClassifier
 from xgboost import XGBClassifier
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
+from sklearn.pipeline import Pipeline
 
-# Relative import using package structure
 from src.preprocess import load_and_preprocess_data
 
-# Initialize DAGsHub Tracking
-dagshub.init(repo_owner='heshan.thilakawardena', repo_name='smartcare-noshow-ai', mlflow=True)
+# Initialize DAGsHub & MLflow Tracking
+try:
+    dagshub.init(repo_owner="heshan.thilakawardena", repo_name="smartcare-noshow-ai", mlflow=True)
+except Exception as e:
+    print(f"DAGsHub initialization warning: {e}")
+
+DATA_PATH = "data/smartcare_ai_dataset_1000.csv"
+MODELS_DIR = "models"
+os.makedirs(MODELS_DIR, exist_ok=True)
 
 def train_and_evaluate():
-    # Automatically create the 'models' output directory if it doesn't exist
-    os.makedirs('models', exist_ok=True)
-    
-    # Path pointing to the CSV file inside the 'data' directory
-    csv_path = 'data/smartcare_ai_dataset_1000.csv'
-    
-    X_train, X_test, y_train, y_test, preprocessor, _ = load_and_preprocess_data(csv_path)
-    
+    # 1. Load Data & Preprocessor
+    X_train, X_test, y_train, y_test, preprocessor, _ = load_and_preprocess_data(DATA_PATH)
+
+    # 2. Define Models with Tuned Hyperparameters
     models = {
-        'Random_Forest': RandomForestClassifier(n_estimators=150, max_depth=10, random_state=42),
-        'XGBoost': XGBClassifier(n_estimators=150, max_depth=5, learning_rate=0.05, random_state=42, eval_metric='logloss')
+        'Random_Forest': RandomForestClassifier(
+            n_estimators=200,
+            max_depth=6,              # Constrained depth to prevent overfitting
+            min_samples_split=5,
+            class_weight='balanced',  # Balance class weights
+            random_state=42
+        ),
+        'XGBoost': XGBClassifier(
+            n_estimators=100,
+            max_depth=3,              # Shallow depth ideal for 1000 tabular rows
+            learning_rate=0.03,
+            subsample=0.8,
+            colsample_bytree=0.8,
+            random_state=42,
+            eval_metric='logloss'
+        ),
+        'Decision_Tree_Zahra': DecisionTreeClassifier(
+            max_depth=5,              # Controlled depth to prevent over-splitting
+            min_samples_split=10,
+            min_samples_leaf=5,
+            class_weight='balanced',
+            random_state=42
+        )
     }
-    
-    for name, model in models.items():
+
+    # Model save mapping
+    save_paths = {
+        'Random_Forest': os.path.join(MODELS_DIR, "random_forest_model.joblib"),
+        'XGBoost': os.path.join(MODELS_DIR, "xgboost_model.joblib"),
+        'Decision_Tree_Zahra': os.path.join(MODELS_DIR, "decision_tree_zahra_model.joblib")
+    }
+
+    # 3. Train & Evaluate Models
+    for name, clf in models.items():
         with mlflow.start_run(run_name=name):
+            # Create full sklearn Pipeline
             pipeline = Pipeline([
                 ('preprocessor', preprocessor),
-                ('classifier', model)
+                ('classifier', clf)
             ])
-            
+
+            # Fit pipeline
             pipeline.fit(X_train, y_train)
-            
+
+            # Predictions
             y_pred = pipeline.predict(X_test)
-            y_prob = pipeline.predict_proba(X_test)[:, 1]
-            
-            # Compute classification evaluation metrics
+            y_proba = pipeline.predict_proba(X_test)[:, 1] if hasattr(pipeline, "predict_proba") else y_pred
+
+            # Evaluation Metrics
             acc = accuracy_score(y_test, y_pred)
-            prec = precision_score(y_test, y_pred)
-            rec = recall_score(y_test, y_pred)
-            f1 = f1_score(y_test, y_pred)
-            auc = roc_auc_score(y_test, y_prob)
-            
+            prec = precision_score(y_test, y_pred, zero_division=0)
+            rec = recall_score(y_test, y_pred, zero_division=0)
+            f1 = f1_score(y_test, y_pred, zero_division=0)
+            auc = roc_auc_score(y_test, y_proba)
+
+            # Print Results to Terminal
             print(f"\n--- {name} Results ---")
             print(f"Accuracy: {acc:.4f} | Precision: {prec:.4f} | Recall: {rec:.4f} | F1: {f1:.4f} | AUC: {auc:.4f}")
-            
-            # Log metrics and parameters to DAGsHub via MLflow
-            mlflow.log_param("model_type", name)
+
+            # MLflow Logging
+            mlflow.log_params(clf.get_params())
             mlflow.log_metric("accuracy", acc)
             mlflow.log_metric("precision", prec)
             mlflow.log_metric("recall", rec)
             mlflow.log_metric("f1_score", f1)
             mlflow.log_metric("roc_auc", auc)
-            
-            # Save pipeline as .joblib model file
-            model_filename = f"models/{name.lower()}_model.joblib"
-            joblib.dump(pipeline, model_filename)
-            mlflow.log_artifact(model_filename)
-            print(f"Successfully saved trained pipeline to {model_filename}")
 
-if __name__ == '__main__':
+            # Save Trained Pipeline Locally
+            joblib.dump(pipeline, save_paths[name])
+            print(f"Successfully saved trained pipeline to {save_paths[name]}")
+
+if __name__ == "__main__":
     train_and_evaluate()
