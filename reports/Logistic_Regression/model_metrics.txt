@@ -1,0 +1,7 @@
+========== Logistic Regression Evaluation ==========
+
+accuracy: 1.0000
+precision: 1.0000
+recall: 1.0000
+f1_score: 1.0000
+roc_auc: 1.0000
