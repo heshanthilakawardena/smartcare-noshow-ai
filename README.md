@@ -1,70 +1,82 @@
-SmartCare Hospital AI
-Our AI-powered prediction system uses Machine Learning models such as Decision Tree to identify patients who are more likely to miss their appointments before the scheduled date. It helps healthcare providers understand potential no-shows, take early actions such as reminders or follow-ups, and improve appointment management.
 
-Task list
-[x] Training Decision Tree model
+# SmartCare Agent Console Developer
 
-[X] Track model using MLflow
+Hi, I’m [Zahra](https://github.com/Zahra-Ismail). I am responsible for training and implementing the **Decision Tree** model for this project. I also developed the **Flask server** to connect the **Machine Learning models** with the application and worked on the client-side development to provide a user-friendly interface.
 
-[x] Save Model Artifacts in [**Dagshub**](https://dagshub.com/heshan.thilakawardena/smartcare-noshow-ai/experiments)
+### Task list
+- [x] Training Decision Tree model
+- [x] Track model using `MLflow`
+- [x] Save Model Artifacts in [**Dagshub**](https://dagshub.com/heshan.thilakawardena/smartcare-noshow-ai/experiments)
+- [ ] Data versioning using `dvc`
+- [x] `SHAP` implement for Explanations
+- [x] Frontend using `Bootstrap` + `Flask`
+- [x] `exe` Ready
 
-[ ] Data versioning using dvc
-
-[x] SHAP implement for Explanations
-
-[x] Frontend using Bootstrap + Flask
-
-[x] exe Ready
-
-### Usage
+### For Developers
 - Download Code
-- Install Esenntial libraries      
-  ```
-  pip install requirements.txt
-  ```
-- Run code in terminal
-  ```
-  python app.py
-  ```
-  
-Decision Tree Model
+- Install Essential libraries     
+
+```
+
+pip install -r requirements.txt
+
+```
+- Start Training
+
+```
+
+python main.py
+
+```
+
+# Decision Tree Model
 
 ### Confusion Matrix
-![Model Confustion mattrix](training/DecisionTree/reports/confusion_matrix.png)
+![Model Confusion matrix](training/DecisionTree/reports/confusion_matrix.png)
 
 ### ROC
-![Model Confustion mattrix](training/DecisionTree/reports/roc_curve.png)
+![Model ROC curve](training/DecisionTree/reports/roc_curve.png)
+
+# Folder Structure
 
 
+```
 
-System Architecture
-                 User
-                  |
-                  |
-             Bootstrap UI
-                  |
-        Select Model Dropdown
-                  |
-                  |
-        POST JSON Request
-                  |
-                  ↓
-              Flask API
-                  |
-                  |
-            Decision Tree
-                  |
-          Smartcare_DecisionTree
-                  |
-                  ↓
-      Smartcare_Preprocessor.joblib
-                  |
-                  ↓
-              Prediction
-                  |
-                  ↓
-  SHAP + Smartcare_Preprocessor.joblib
-                  |
-                  ↓
-         Result back to UI
-THANK YOU !!
+training/
+└── DecisionTree/
+├── data/
+│   ├── processed/
+│   └── raw/
+│
+├── model/
+│
+├── reports/
+│   └── Decision_Tree/
+│       ├── confusion_matrix.png
+│       └── roc_curve.png
+│
+├── src/
+│   ├── preprocessing/
+│   │   ├── CleanData.py
+│   │   ├── LoadData.py
+│   │   ├── preprocess.py
+│   │   └── SaveObjects.py
+│   │
+│   ├── training/
+│   │   ├── evaluate.py
+│   │   └── train.py
+│   │
+│   └── utils/
+│       ├── mlflow_tracker.py
+│       └── path.py
+│
+├── .env
+└── main.py
+
+```
+
+## Contributor
+
+- [Zahra Ismail](https://github.com/Zahra-Ismail)
+
+```
