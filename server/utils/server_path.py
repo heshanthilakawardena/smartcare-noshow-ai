@@ -26,7 +26,7 @@ PREPROCESSOR_PATH = (
 
 SHAP_BACKGROUND_PATH = (
     MODEL_PATH /
-    "Smartcare_SHAP_background_data.joblib"
+    "Smartcare_SHAP_Background.joblib"
 )
 
 STEAMLIT = BASE_DIR / "ui" / "dashboard.py"
