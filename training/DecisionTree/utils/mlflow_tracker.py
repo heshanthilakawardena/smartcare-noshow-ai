@@ -95,28 +95,18 @@ def MLflowTracker(
         )
 
 
-        if "Logistic" in model_name:
+        if "Decision" or "Tree" in model_name:
 
             mlflow.log_param(
 
                 "algorithm",
 
-                "Logistic Regression"
+                "Decision Tree"
 
             )
 
 
-        elif "KNN" in model_name:
-
-            mlflow.log_param(
-
-                "algorithm",
-
-                "K-Nearest Neighbors"
-
-            )
-
-
+        
         mlflow.log_param(
 
             "problem_type",

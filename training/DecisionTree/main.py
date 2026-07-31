@@ -1,8 +1,7 @@
 from utils.path import (
     RAW_DATA_PATH,
     MODEL_PATH,
-    LOGI_REPORT_PATH,
-    KNN_REPORT_PATH,
+    DECISION_REPORT_PATH,
     PROCESSED_DATA_PATH
 )
 from src.preprocessing.LoadData import LoadData
@@ -12,22 +11,15 @@ from src.preprocessing.SaveObjects import (
     load_processed_data,
     processed_data_exists
 )
-from src.training.train import (
-    TrainKNN,
-    TrainLogisticRegression
-)
-from src.training.evaluate import (
-    EvaluateLogisticRegression,
-    EvaluateKNN
-)
+from src.training.train import TrainDecisionTree
+from src.training.evaluate import EvaluateDecisionTree
 from utils.mlflow_tracker import MLflowTracker
+from sklearn.model_selection import train_test_split
 import joblib
 from pathlib import Path
 
 
-
 def TrainingPipeline():
-
 
     print(
         "-----------------------------\n"
@@ -42,13 +34,21 @@ def TrainingPipeline():
             "+ LOADING DATA\n"
         )
 
-
         X, y = load_processed_data(
             PROCESSED_DATA_PATH
         )
 
-    else:
+        # Recreate train/test splits from loaded processed data
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=0.2, random_state=42
+        )
 
+        # Load the saved preprocessor
+        preprocessor = joblib.load(
+            Path(MODEL_PATH) / "Smartcare_Preprocessor.joblib"
+        )
+
+    else:
 
         print(
             "-----------------------------\n"
@@ -66,19 +66,15 @@ def TrainingPipeline():
             "-----------------------------\n"
         )
 
-
         df = CleanData(
             df
         )
-
-
 
         print(
             "-----------------------------\n"
             "PREPARING DATA\n"
             "-----------------------------\n"
         )
-
 
         (
             X_train,
@@ -88,27 +84,24 @@ def TrainingPipeline():
             preprocessor,
             X,
             y
-
         ) = PrepareData(
             df,
             PROCESSED_DATA_PATH,
             MODEL_PATH
         )
 
-    Path(MODEL_PATH).mkdir(
-        parents=True,
-        exist_ok=True
-    )
+        Path(MODEL_PATH).mkdir(
+            parents=True,
+            exist_ok=True
+        )
 
+        joblib.dump(
+            preprocessor,
+            Path(MODEL_PATH) /
+            "Smartcare_Preprocessor.joblib"
+        )
 
-    joblib.dump(
-        preprocessor,
-        Path(MODEL_PATH) /
-        "Smartcare_Preprocessor.joblib"
-    )
-
-
-    print("✅ Preprocessor saved\n")
+        print("✅ Preprocessor saved\n")
 
     print(
         "-----------------------------\n"
@@ -116,70 +109,40 @@ def TrainingPipeline():
         "-----------------------------\n"
     )
 
-    logistic_model = TrainLogisticRegression(
+    decisiontree_model = TrainDecisionTree(
         X_train,
         y_train,
         MODEL_PATH
     )
 
-    print("+ Evaluating logistic regression model\n")
+    print("+ Evaluating Decision Tree model\n")
 
-    logistic_metrics = EvaluateLogisticRegression(
-        logistic_model,
+    decisiontree_metrics = EvaluateDecisionTree(
+        decisiontree_model,
         X_test,
         y_test,
-        LOGI_REPORT_PATH
+        DECISION_REPORT_PATH
     )
 
-    print("+ MLFlow Tracking logistic regression model\n")
+    print("+ MLFlow Tracking Decision Tree model\n")
     print(" ")
 
-    # MLFLOW LOGISTIC
+    # MLFLOW DECISION TREE
     MLflowTracker(
-        model_name="Smartcare_Logistic_Regression_Model",
-        metrics=logistic_metrics,
-        REPORT_PATH=LOGI_REPORT_PATH,
-        MODEL_PATH=MODEL_PATH
-    )
-
-    # TRAIN KNN
-    print("+ KNN model training\n")
-
-    knn_model = TrainKNN(
-        X_train,
-        y_train,
-        MODEL_PATH
-    )
-
-    # EVALUATE KNN
-    print("+ Evaluating KNN model\n")
-
-    knn_metrics = EvaluateKNN(
-        knn_model,
-        X_test,
-        y_test,
-        KNN_REPORT_PATH
-    )
-
-    print("+ MLFlow Tracking KNN model\n")
-    print(" ")
-
-    MLflowTracker(
-        model_name="Smartcare_KNN_Model",
-        metrics=knn_metrics,
-        REPORT_PATH=KNN_REPORT_PATH,
+        model_name="Smartcare_Decision_Tree_Model",
+        metrics=decisiontree_metrics,
+        REPORT_PATH=DECISION_REPORT_PATH,
         MODEL_PATH=MODEL_PATH
     )
 
     print(
         "-----------------------------\n"
-        "BOTH MODELS TRAINED SUCCESSFULLY\n"
+        "DECISION TREE MODEL TRAINED SUCCESSFULLY\n"
         "PIPELINE SHUT DOWN\n"
-        "- BINARA WIJEWICKRAMA -\n"
+        "- ZAHRA ISMAIL -\n"
         "-----------------------------"
     )
 
 
 if __name__ == "__main__":
-
     TrainingPipeline()

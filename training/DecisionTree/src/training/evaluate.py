@@ -248,9 +248,9 @@ def EvaluateModel(model, model_name, X_test, y_test, report_path):
 
     return metrics
 
-#Logistic Regression Evaluation
+#Decision Tree Evaluation
 
-def EvaluateLogisticRegression(
+def EvaluateDecisionTree(
         model,
         X_test,
         y_test,
@@ -260,7 +260,7 @@ def EvaluateLogisticRegression(
     return EvaluateModel(
 
         model,
-        "Logistic Regression",
+        "Decision Tree",
         X_test,
         y_test,
         report_path
@@ -268,18 +268,3 @@ def EvaluateLogisticRegression(
     )
 
 
-#KNN Evaluation
-def EvaluateKNN(
-        model,
-        X_test,
-        y_test,
-        report_path
-):
-
-    return EvaluateModel(
-        model,
-        "KNN",
-        X_test,
-        y_test,
-        report_path
-    )
