@@ -30,6 +30,29 @@ def explain_prediction(
 
         values = shap_values.values[0]
 
+    # ==========================
+    # XGBoost & Random Forest SHAP
+    # ==========================
+
+    elif model_name in ["XGBoost", "Random Forest"]:
+
+        explainer = shap.TreeExplainer(
+            model
+        )
+
+        shap_values = explainer(
+            processed_input
+        )
+
+        try:
+
+            # Binary classification
+            values = shap_values.values[0, :, 1]
+
+        except Exception:
+
+            values = shap_values.values[0]
+
 
 
     # ==========================

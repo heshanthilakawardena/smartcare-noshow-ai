@@ -18,6 +18,15 @@ KNN_MODEL_PATH = (
     "Smartcare_KNN_Model.joblib"
 )
 
+XGBOOST_MODEL_PATH = (
+    MODEL_PATH /
+    "xgboost_model.joblib"
+)
+
+RANDOM_FOREST_MODEL_PATH = (
+    MODEL_PATH / 
+    "random_forest_model.joblib"
+)
 
 PREPROCESSOR_PATH = (
     MODEL_PATH /

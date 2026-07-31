@@ -7,4 +7,5 @@ mlflow
 dagshub
 joblib
 shap
-streamlit
+Flask
+xgboost
