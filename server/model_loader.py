@@ -6,6 +6,7 @@ from utils.server_path import (
     KNN_MODEL_PATH,
     XGBOOST_MODEL_PATH,
     RANDOM_FOREST_MODEL_PATH,
+    DISICION_TREE_MODEL_PATH,
     PREPROCESSOR_PATH,
     SHAP_BACKGROUND_PATH
 )
@@ -30,7 +31,10 @@ models = {
         joblib.load(XGBOOST_MODEL_PATH),
 
     "Random Forest":
-            joblib.load(RANDOM_FOREST_MODEL_PATH)
+            joblib.load(RANDOM_FOREST_MODEL_PATH),
+
+    "Decision Tree":
+                joblib.load(DISICION_TREE_MODEL_PATH)
 
 }
 
@@ -47,6 +51,9 @@ print("Classes:", models["XGBoost"].classes_)
 
 print("✅ Random Forest Loaded")
 print("Classes:", models["Random Forest"].classes_)
+
+print("✅ Decision Tree Loaded")
+print("Classes:", models["Decision Tree"].classes_)
 
 
 # ==========================

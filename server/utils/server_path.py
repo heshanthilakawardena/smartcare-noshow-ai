@@ -28,6 +28,10 @@ RANDOM_FOREST_MODEL_PATH = (
     "random_forest_model.joblib"
 )
 
+DISICION_TREE_MODEL_PATH = (
+    MODEL_PATH / 
+    "Smartcare_Decision_Tree_Model.joblib"
+)
 PREPROCESSOR_PATH = (
     MODEL_PATH /
     "Smartcare_Preprocessor.joblib"

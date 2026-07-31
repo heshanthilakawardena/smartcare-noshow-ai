@@ -34,7 +34,7 @@ def explain_prediction(
     # XGBoost & Random Forest SHAP
     # ==========================
 
-    elif model_name in ["XGBoost", "Random Forest"]:
+    elif model_name in ["XGBoost", "Random Forest", "Decision Tree"]:
 
         explainer = shap.TreeExplainer(
             model
