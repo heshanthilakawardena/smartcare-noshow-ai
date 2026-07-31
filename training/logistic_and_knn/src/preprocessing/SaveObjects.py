@@ -16,7 +16,7 @@ def load_processed_data(path):
 
     file_path = (
         path /
-        "layer_one_processed_dataset.csv"
+        "smartcare_processed_dataset.csv"
     )
 
 

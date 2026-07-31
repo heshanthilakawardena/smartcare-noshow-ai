@@ -2,7 +2,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import (
     StandardScaler,
     OneHotEncoder,
-    OrdinalEncoder
 )
 from sklearn.compose import ColumnTransformer
 from pathlib import Path
@@ -33,11 +32,27 @@ def PrepareData(df, processed_data_path, model_path):
     # -----------------------------
 
     remove_columns = [
-
+        "patient_id",
+        "record_id",
+        "appointment_status",
+        "admitted",
+        "room_type",
+        "length_of_stay_days",
+        "previous_admissions",
+        "lab_tests_count",
+        "treatments_count",
+        "room_charge_lkr",
+        "lab_charge_lkr",
+        "medicine_charge_lkr",
+        "total_bill_lkr",
+        "payment_status",
+        "payment_method",
         "readmitted_30_days",
-
         "disease_risk_level"
-
+        "systolic_bp",
+        "diastolic_bp",
+        "blood_sugar_mg_dl",
+        "cholesterol_mg_dl"
     ]
 
 
@@ -163,74 +178,18 @@ def PrepareData(df, processed_data_path, model_path):
 
 
     onehot_columns = [
-
         "gender",
-
-        "blood_group",
-
         "department",
-
         "diagnosis",
-
-        "room_type",
-
-        "payment_method"
-
     ]
-
-
-
-    ordinal_columns = [
-
-        "appointment_status",
-
-        "payment_status"
-
-    ]
-
-
 
     numeric_columns = [
 
         col for col in X.columns
 
-        if col not in
-        onehot_columns + ordinal_columns
+        if col not in onehot_columns
 
     ]
-
-
-
-    # -----------------------------
-    # Category Order
-    # -----------------------------
-
-
-    appointment_order = [
-
-        "Scheduled",
-
-        "Completed",
-
-        "Cancelled",
-
-        "No-Show"
-
-    ]
-
-
-
-    payment_order = [
-
-        "Paid",
-
-        "Partially Paid",
-
-        "Unpaid"
-
-    ]
-
-
 
     # -----------------------------
     # Preprocessor
@@ -255,30 +214,6 @@ def PrepareData(df, processed_data_path, model_path):
                 onehot_columns
 
             ),
-
-
-
-            (
-
-                "ordinal",
-
-                OrdinalEncoder(
-
-                    categories=[
-
-                        appointment_order,
-
-                        payment_order
-
-                    ]
-
-                ),
-
-                ordinal_columns
-
-            ),
-
-
 
             (
 
