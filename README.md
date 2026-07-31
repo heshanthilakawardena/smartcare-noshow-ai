@@ -2,11 +2,11 @@
   <img src="assets/SmartCare.jpg" alt="thmbanner" width="100%">
 </p>
 
-# SmartCare Hospital AI
+# SmartCare Hospital AI Agent Console
 
 Our AI powered prediction system uses Machine Learning models to identify patients who are more likely to miss their appointments before the scheduled date. It helps healthcare providers understand potential no-shows, take early actions such as reminders or follow-ups, and improve appointment management.
 
-![](assets/SmartCare Ai Console.png)
+[ ](assets/SmartCare Ai Console.png)
 
 ### Usage
 - Download Code
