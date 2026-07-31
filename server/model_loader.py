@@ -27,6 +27,7 @@ models = {
 
 
 print("✅ Logistic Regression Loaded")
+print("Classes:", models["Logistic Regression"].classes_)
 print("✅ KNN Loaded")
 print("Classes:", models["KNN"].classes_)
 

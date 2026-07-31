@@ -1,39 +1,41 @@
 /* ==========================================================================
-   SmartCare Hospital AI - Dashboard Controller
+   SmartCare Hospital AI - Chat Controller
    ========================================================================== */
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Initialize Dark/Light Theme System
     initTheme();
 
-    // 2. Set default appointment date to today
+    // Set default appointment date to today
     const dateInput = document.getElementById('appointment_date');
     if (dateInput && !dateInput.value) {
-        const today = new Date().toISOString().split('T')[0];
-        dateInput.value = today;
+        dateInput.value = new Date().toISOString().split('T')[0];
     }
 
-    // 3. Attach Form Submission Event Listener
+    // Attach external floating predict button to form submission
+    const submitBtnExt = document.getElementById('btn-submit-external');
     const form = document.getElementById('prediction-form');
-    if (form) {
-        form.addEventListener('submit', handlePrediction);
+
+    if (submitBtnExt && form) {
+        submitBtnExt.addEventListener('click', (e) => {
+            // Check form validity before proceeding
+            if (form.checkValidity()) {
+                handlePrediction(e);
+            } else {
+                form.reportValidity();
+            }
+        });
     }
 
-    // 4. Quick Fill Demo Data Button Listener
+    // Quick Fill Demo Data Button Listener
     const demoBtn = document.getElementById('btn-fill-demo');
     if (demoBtn) {
         demoBtn.addEventListener('click', fillDemoData);
     }
 });
 
-/**
- * Dark / Light Theme Toggle System
- */
 function initTheme() {
     const themeBtn = document.getElementById('theme-toggle-btn');
     const themeText = document.getElementById('theme-toggle-text');
-
-    // Check stored theme or default to dark
     const savedTheme = localStorage.getItem('smartcare-theme') || 'dark';
     applyTheme(savedTheme);
 
@@ -61,144 +63,142 @@ function initTheme() {
     }
 }
 
-/**
- * Handle Prediction Form Submission
- */
 async function handlePrediction(e) {
     e.preventDefault();
 
-    const submitBtn = document.getElementById('btn-submit');
+    const submitBtn = document.getElementById('btn-submit-external');
     const spinner = document.getElementById('btn-spinner');
     const btnText = document.getElementById('btn-text');
-    const errorAlert = document.getElementById('error-alert');
+    const chatContainer = document.getElementById('chat-container');
+    const insertionPoint = document.getElementById('chat-insertion-point');
 
-    // UI Loading State
+    // UI Loading State for Button
     submitBtn.classList.add('loading');
     spinner.style.display = 'inline-block';
-    btnText.textContent = 'Analyzing...';
-    errorAlert.style.display = 'none';
+    btnText.innerHTML = 'Predicting...';
 
-    // Safe retrieval of optional record_id
-    const recordIdEl = document.getElementById('record_id');
-    const record_id = recordIdEl ? parseInt(recordIdEl.value, 10) : 1;
+    // Disable inputs while predicting
+    document.querySelectorAll('#prediction-form input, #prediction-form select').forEach(el => el.disabled = true);
 
-    // Get selected model from dropdown
     const modelSelect = document.getElementById('model-select');
     const selectedModel = modelSelect ? modelSelect.value : 'Logistic Regression';
 
-    // Build Payload matching backend expectations
+    // 1. Append User Message
+    const tplUser = document.getElementById('tpl-user-msg');
+    const userMsgNode = tplUser.content.cloneNode(true);
+    userMsgNode.querySelector('.msg-model-name').textContent = selectedModel;
+    insertionPoint.appendChild(userMsgNode);
+    scrollToBottom(chatContainer);
+
+    // 2. Append Agent Loading Message
+    const tplLoading = document.getElementById('tpl-agent-loading');
+    const loadingNode = tplLoading.content.cloneNode(true);
+    insertionPoint.appendChild(loadingNode);
+    scrollToBottom(chatContainer);
+
+    // Slight artificial delay for smooth chat feel
+    await new Promise(r => setTimeout(r, 600));
+
+    // Gather payload
+    const consultFeeEl = document.getElementById('consultation_fee_lkr');
+    const consultation_fee_lkr = consultFeeEl && consultFeeEl.value !== ''
+        ? parseInt(consultFeeEl.value, 10)
+        : null;
+
     const payload = {
         model: selectedModel,
-        record_id: record_id,
+        record_id: 1,
         age: parseInt(document.getElementById('age').value, 10) || 40,
         gender: document.getElementById('gender').value,
-        blood_group: document.getElementById('blood_group').value,
         department: document.getElementById('department').value,
         diagnosis: document.getElementById('diagnosis').value,
         appointment_date: document.getElementById('appointment_date').value,
         waiting_days: parseInt(document.getElementById('waiting_days').value, 10) || 0,
         previous_appointments: parseInt(document.getElementById('previous_appointments').value, 10) || 0,
         missed_previous_appointments: parseInt(document.getElementById('missed_previous_appointments').value, 10) || 0,
-        appointment_status: document.getElementById('appointment_status').value,
-        admitted: parseInt(document.getElementById('admitted').value, 10) || 0,
-        room_type: document.getElementById('room_type').value,
-        length_of_stay_days: parseInt(document.getElementById('length_of_stay_days').value, 10) || 0,
-        previous_admissions: parseInt(document.getElementById('previous_admissions').value, 10) || 0,
-        systolic_bp: parseInt(document.getElementById('systolic_bp').value, 10) || 120,
-        diastolic_bp: parseInt(document.getElementById('diastolic_bp').value, 10) || 80,
-        blood_sugar_mg_dl: parseInt(document.getElementById('blood_sugar_mg_dl').value, 10) || 100,
-        cholesterol_mg_dl: parseInt(document.getElementById('cholesterol_mg_dl').value, 10) || 180,
         bmi: parseFloat(document.getElementById('bmi').value) || 25.0,
-        lab_tests_count: parseInt(document.getElementById('lab_tests_count').value, 10) || 0,
-        treatments_count: parseInt(document.getElementById('treatments_count').value, 10) || 0,
-        consultation_fee_lkr: parseInt(document.getElementById('consultation_fee_lkr').value, 10) || 0,
-        room_charge_lkr: parseInt(document.getElementById('room_charge_lkr').value, 10) || 0,
-        lab_charge_lkr: parseInt(document.getElementById('lab_charge_lkr').value, 10) || 0,
-        medicine_charge_lkr: parseInt(document.getElementById('medicine_charge_lkr').value, 10) || 0,
-        total_bill_lkr: parseInt(document.getElementById('total_bill_lkr').value, 10) || 0,
-        payment_status: document.getElementById('payment_status').value,
-        payment_method: document.getElementById('payment_method').value
+        consultation_fee_lkr: consultation_fee_lkr
     };
 
     try {
         const response = await fetch('/predict', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
 
         const result = await response.json();
 
+        // Remove loading message
+        const loadingMsgEl = document.getElementById('loading-message');
+        if (loadingMsgEl) loadingMsgEl.remove();
+
         if (!response.ok || result.error) {
-            showError(result.error || 'Server error occurred during prediction.');
+            showErrorBubble(result.error || 'Server error occurred during prediction.', insertionPoint);
         } else {
-            renderResults(result);
+            appendResultBubble(result, insertionPoint);
         }
     } catch (err) {
-        showError('❌ Server connection error. Please ensure Flask server is running.');
+        const loadingMsgEl = document.getElementById('loading-message');
+        if (loadingMsgEl) loadingMsgEl.remove();
+        showErrorBubble('❌ Server connection error. Please ensure Flask server is running.', insertionPoint);
     } finally {
         // Reset UI Loading State
         submitBtn.classList.remove('loading');
         spinner.style.display = 'none';
-        btnText.textContent = '🚀 Predict No-Show Risk';
+        btnText.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Predict No-Show Risk';
+
+        // Re-enable inputs
+        document.querySelectorAll('#prediction-form input, #prediction-form select').forEach(el => el.disabled = false);
+
+        scrollToBottom(chatContainer);
     }
 }
 
-/**
- * Render Results on Dashboard
- */
-function renderResults(data) {
-    const resultsPanel = document.getElementById('results-panel');
-    const modelBadge = document.getElementById('output-model-badge');
-    const circleProgress = document.getElementById('circle-progress');
-    const circlePercent = document.getElementById('circle-percent');
-    const circleRiskText = document.getElementById('circle-risk-text');
-    const resultStatusTitle = document.getElementById('result-status-title');
-    const resultDescription = document.getElementById('result-description');
-    const shapList = document.getElementById('shap-list');
+function appendResultBubble(data, container) {
+    const tplResult = document.getElementById('tpl-agent-result');
+    const resultNode = tplResult.content.cloneNode(true);
 
-    // Display Model Name
-    modelBadge.textContent = `Model: ${data.model}`;
+    // Populate data
+    resultNode.querySelector('.model-badge-inline').textContent = `Model: ${data.model}`;
 
     const prob = data.probability;
     const percentVal = (prob * 100).toFixed(1);
-    circlePercent.textContent = `${percentVal}%`;
+    resultNode.querySelector('.circle-percent').textContent = `${percentVal}%`;
 
-    // Circular Gauge Perimeter for r=50 is 2 * PI * 50 = 314.159
+    const circleProgress = resultNode.querySelector('.chat-circle-progress');
     const circumference = 314.159;
-    const strokeDashoffset = circumference - (prob * circumference);
-    circleProgress.style.strokeDashoffset = strokeDashoffset;
+    circleProgress.style.strokeDashoffset = circumference - (prob * circumference);
 
-    // Reset Title Classes
-    resultStatusTitle.className = 'result-status-title';
+    const circleRiskText = resultNode.querySelector('.circle-risk-text');
+    const statusTitle = resultNode.querySelector('.result-status-title');
+    const desc = resultNode.querySelector('.result-description');
 
     if (data.risk === 'High Risk') {
         circleProgress.style.stroke = 'var(--risk-high)';
         circleRiskText.style.color = 'var(--risk-high)';
         circleRiskText.textContent = 'HIGH';
-        resultStatusTitle.classList.add('high');
-        resultStatusTitle.textContent = 'High Risk 🚨';
-        resultDescription.textContent = 'High Risk — Patient will not come, he needs to attend.';
+        statusTitle.classList.add('high');
+        statusTitle.textContent = 'High Risk 🚨';
+        desc.textContent = 'High Risk — Patient will likely not attend. Follow-up recommended.';
     } else if (data.risk === 'Medium Risk') {
         circleProgress.style.stroke = 'var(--risk-medium)';
         circleRiskText.style.color = 'var(--risk-medium)';
         circleRiskText.textContent = 'MEDIUM';
-        resultStatusTitle.classList.add('medium');
-        resultStatusTitle.textContent = 'Medium Risk ⚠️';
-        resultDescription.textContent = 'Medium Risk — Patient rarely comes.';
+        statusTitle.classList.add('medium');
+        statusTitle.textContent = 'Medium Risk ⚠️';
+        desc.textContent = 'Medium Risk — Patient rarely comes.';
     } else {
         circleProgress.style.stroke = 'var(--risk-low)';
         circleRiskText.style.color = 'var(--risk-low)';
         circleRiskText.textContent = 'LOW';
-        resultStatusTitle.classList.add('low');
-        resultStatusTitle.textContent = 'Low Risk ✅';
-        resultDescription.textContent = 'Low Risk — Patient generally comes for clinic.';
+        statusTitle.classList.add('low');
+        statusTitle.textContent = 'Low Risk ✅';
+        desc.textContent = 'Low Risk — Patient generally attends the clinic.';
     }
 
-    // Render SHAP Explainable AI Results
-    shapList.innerHTML = '';
+    // SHAP Explainable AI Results
+    const shapList = resultNode.querySelector('.chat-shap-list');
     if (data.explanation && Object.keys(data.explanation).length > 0) {
         const entries = Object.entries(data.explanation);
         const maxVal = Math.max(...entries.map(([, v]) => Math.abs(v)), 0.001);
@@ -225,14 +225,32 @@ function renderResults(data) {
         });
     }
 
-    // Reveal Panel and Scroll smoothly into view
-    resultsPanel.style.display = 'block';
-    resultsPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    container.appendChild(resultNode);
 }
 
-/**
- * Format raw feature names for readable UI labels
- */
+function showErrorBubble(msg, container) {
+    const errorBubble = document.createElement('div');
+    errorBubble.className = 'chat-message agent animate-pop-in';
+    errorBubble.innerHTML = `
+        <div class="chat-avatar" style="background: var(--risk-high); color: white;">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+        <div class="chat-bubble error-bubble">
+            <p>${msg}</p>
+        </div>
+    `;
+    container.appendChild(errorBubble);
+}
+
+function scrollToBottom(container) {
+    setTimeout(() => {
+        container.scrollTo({
+            top: container.scrollHeight,
+            behavior: 'smooth'
+        });
+    }, 50); // slight delay to allow rendering
+}
+
 function formatFeatureName(name) {
     return name
         .replace(/_/g, ' ')
@@ -242,53 +260,15 @@ function formatFeatureName(name) {
         .replace(/Bp/g, 'BP');
 }
 
-/**
- * Display Error Alert
- */
-function showError(msg) {
-    const errorAlert = document.getElementById('error-alert');
-    const resultsPanel = document.getElementById('results-panel');
-    errorAlert.textContent = msg;
-    errorAlert.style.display = 'block';
-    resultsPanel.style.display = 'none';
-    errorAlert.scrollIntoView({ behavior: 'smooth', block: 'center' });
-}
-
-/**
- * Quick Fill Demo Preset
- */
 function fillDemoData() {
-    const recordIdEl = document.getElementById('record_id');
-    if (recordIdEl) recordIdEl.value = 101;
-
     document.getElementById('age').value = 45;
     document.getElementById('gender').value = 'Female';
-    document.getElementById('blood_group').value = 'O+';
-
+    document.getElementById('bmi').value = 27.5;
     document.getElementById('department').value = 'Cardiology';
     document.getElementById('diagnosis').value = 'Hypertension';
+    document.getElementById('appointment_date').value = new Date().toISOString().split('T')[0];
     document.getElementById('waiting_days').value = 14;
     document.getElementById('previous_appointments').value = 5;
     document.getElementById('missed_previous_appointments').value = 2;
-    document.getElementById('appointment_status').value = 'Scheduled';
-
-    document.getElementById('admitted').value = '0';
-    document.getElementById('room_type').value = 'General';
-    document.getElementById('length_of_stay_days').value = 0;
-    document.getElementById('previous_admissions').value = 1;
-    document.getElementById('systolic_bp').value = 135;
-    document.getElementById('diastolic_bp').value = 88;
-    document.getElementById('blood_sugar_mg_dl').value = 115;
-    document.getElementById('cholesterol_mg_dl').value = 210;
-    document.getElementById('bmi').value = 27.5;
-    document.getElementById('lab_tests_count').value = 3;
-    document.getElementById('treatments_count').value = 2;
-
     document.getElementById('consultation_fee_lkr').value = 2500;
-    document.getElementById('room_charge_lkr').value = 0;
-    document.getElementById('lab_charge_lkr').value = 1500;
-    document.getElementById('medicine_charge_lkr').value = 1800;
-    document.getElementById('total_bill_lkr').value = 5800;
-    document.getElementById('payment_status').value = 'Paid';
-    document.getElementById('payment_method').value = 'Card';
 }

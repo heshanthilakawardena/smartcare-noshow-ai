@@ -16,7 +16,29 @@ def CleanData(df):
 
     # Drop columns that are not needed for Option A
     df.drop(
-        columns=["patient_id","record_id","readmitted_30_days", "disease_risk_level"],
+        columns = [
+        "patient_id",
+        "record_id",
+        "appointment_status",
+        "admitted",
+        "room_type",
+        "length_of_stay_days",
+        "previous_admissions",
+        "lab_tests_count",
+        "treatments_count",
+        "room_charge_lkr",
+        "lab_charge_lkr",
+        "medicine_charge_lkr",
+        "total_bill_lkr",
+        "payment_status",
+        "payment_method",
+        "readmitted_30_days",
+        "disease_risk_level"
+        "systolic_bp",
+        "diastolic_bp",
+        "blood_sugar_mg_dl",
+        "cholesterol_mg_dl",
+    ],
         inplace=True,
         errors="ignore"
     )
