@@ -1,20 +1,25 @@
 import shap
-import numpy as np
 
 
 def explain_prediction(
         model,
         model_name,
         processed_input,
-        feature_names
+        feature_names,
+        background_data
 ):
 
 
+    # ==========================
+    # Logistic Regression SHAP
+    # ==========================
+
     if model_name == "Logistic Regression":
+
 
         explainer = shap.LinearExplainer(
             model,
-            processed_input
+            background_data
         )
 
 
@@ -27,52 +32,96 @@ def explain_prediction(
 
 
 
+    # ==========================
+    # KNN SHAP
+    # ==========================
+
     else:
+
 
         explainer = shap.KernelExplainer(
             model.predict_proba,
-            processed_input
+            background_data
         )
 
+
         try:
+
             # New SHAP versions
-            shap_values = explainer(processed_input)
+
+            shap_values = explainer(
+                processed_input
+            )
+
+
             values = shap_values.values[0, :, 1]
 
+
+
         except Exception:
+
+
             # Older SHAP versions
-            shap_values = explainer.shap_values(processed_input)
+
+            shap_values = explainer.shap_values(
+                processed_input
+            )
+
 
             if isinstance(shap_values, list):
+
                 values = shap_values[1][0]
+
+
             else:
+
                 values = shap_values[0]
 
 
 
+    # ==========================
+    # Create Explanation
+    # ==========================
+
     explanation = {}
 
 
-    for name,value in zip(
+
+    for name, value in zip(
         feature_names,
         values
     ):
 
-        explanation[name] = float(value)
+
+        # Clean feature names
+
+        clean_name = (
+            name
+            .replace("onehot__", "")
+            .replace("numeric__", "")
+            .replace("_", " ")
+            .title()
+        )
+
+
+        explanation[clean_name] = float(value)
 
 
 
-    # sort important features
+    # ==========================
+    # Select Top 5 Important Features
+    # ==========================
 
     explanation = dict(
 
         sorted(
             explanation.items(),
-            key=lambda x:abs(x[1]),
+            key=lambda x: abs(x[1]),
             reverse=True
         )[:5]
 
     )
+
 
 
     return explanation

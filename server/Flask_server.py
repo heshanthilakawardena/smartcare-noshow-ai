@@ -3,7 +3,8 @@ import pandas as pd
 
 from model_loader import (
     models,
-    preprocessor
+    preprocessor,
+    background_data
 )
 from shapAI import explain_prediction
 from utils.server_path import (
@@ -133,7 +134,8 @@ def predict():
             model,
             model_name,
             processed,
-            preprocessor.get_feature_names_out()
+            preprocessor.get_feature_names_out(),
+            background_data
         )
 
         return jsonify({

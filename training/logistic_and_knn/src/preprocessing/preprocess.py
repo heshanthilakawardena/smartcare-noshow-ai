@@ -289,14 +289,16 @@ def PrepareData(df, processed_data_path, model_path):
 
     )
 
+    joblib.dump(
+        X_train,
+        model_path / "Smartcare_SHAP_Background.joblib"
+)
 
     joblib.dump(
 
         preprocessor,
 
-        model_path /
-
-        "Smartcare_Preprocessor.joblib"
+        model_path / "Smartcare_Preprocessor.joblib"
 
     )
 
