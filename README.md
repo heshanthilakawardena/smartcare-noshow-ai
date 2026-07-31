@@ -9,7 +9,8 @@ Our AI-powered prediction system uses Machine Learning models such as Logistic R
 - [x] Save Model Artifacts in [**Dagshub**](https://dagshub.com/heshan.thilakawardena/smartcare-noshow-ai/experiments)
 - [ ] Data versioning using `dvc`
 - [x] `SHAP` implement for Explanations
-- [x] Frountend using `steamlit` + `Flask`
+- [x] Frountend using `Boostrap` + `Flask`
+- [x] `exe` Ready
 
 ### Usage
 - Download Code
@@ -44,7 +45,7 @@ Our AI-powered prediction system uses Machine Learning models such as Logistic R
                  User
                   |
                   |
-             Streamlit UI
+              Boostrap UI
                   |
         Select Model Dropdown
                   |
@@ -69,7 +70,7 @@ Our AI-powered prediction system uses Machine Learning models such as Logistic R
               Prediction
                   |
                   ↓
-                 SHAP
+  SHAP + Smartcare_Preprocessor.joblib
                   |
                   ↓
           Result back to UI
