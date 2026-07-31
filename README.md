@@ -1,6 +1,6 @@
-# SmartCare Hospital AI
+# SmartCare Ai Console Developer
 
-Our AI-powered prediction system uses Machine Learning models such as Logistic Regression and K-Nearest Neighbors (KNN) to identify patients who are more likely to miss their appointments before the scheduled date. It helps healthcare providers understand potential no-shows, take early actions such as reminders or follow-ups, and improve appointment management.
+Hi, I’m Binara. I am responsible for training and implementing the **Logistic Regression** and **K-Nearest Neighbors (KNN)** models for this project. I also developed the **Flask server** to connect the **Machine Learning models** with the application and worked on the client side development to provide a user friendly interface.
 
 ### Task list
 - [x] Training Logistic Regression model
@@ -10,70 +10,73 @@ Our AI-powered prediction system uses Machine Learning models such as Logistic R
 - [ ] Data versioning using `dvc`
 - [x] `SHAP` implement for Explanations
 - [x] Frountend using `Boostrap` + `Flask`
-- [x] `exe` Ready
+- [ ] `exe` Ready
 
-### Usage
+### For Developers
 - Download Code
 - Install Esenntial libraries      
   ```
   pip install requirements.txt
   ```
-- Run code in terminal
+- Start Training
   ```
-  python app.py
+  python main.py
   ```
 
 # Logistic Regression Model
 
 ### Confusion Matrix
-![Model Confustion mattrix](training/logistic_and_knn/reports/Logistic_Regression/confusion_matrix.png)
+![Model Confustion mattrix](reports/Logistic_Regression/confusion_matrix.png)
 
 ### ROC
-![Model Confustion mattrix](training/logistic_and_knn/reports/Logistic_Regression/roc_curve.png)
+![Model Confustion mattrix](reports/Logistic_Regression/roc_curve.png)
 
 # KNN Model
 
 ### Confusion Matrix
-![Model Confustion mattrix](training/logistic_and_knn/reports/KNN/confusion_matrix.png)
+![Model Confustion mattrix](reports/KNN/confusion_matrix.png)
 
 ### ROC
-![Model Confustion mattrix](training/logistic_and_knn/reports/KNN/roc_curve.png)
+![Model Confustion mattrix](reports/KNN/roc_curve.png)
 
-# System Architecture
+# Folder Structure
 
 ```
-                 User
-                  |
-                  |
-              Boostrap UI
-                  |
-        Select Model Dropdown
-                  |
-                  |
-        POST JSON Request
-                  |
-                  ↓
-            Flask API
-                  |
-        --------------------
-        |                  |
- Logistic Regression      KNN
-        |                  |
- Smartcare_Logistic     Smartcare_KNN
-        |                  |
-        --------------------
-                  |
-                  ↓
-      Smartcare_Preprocessor.joblib
-                  |
-                  ↓
-              Prediction
-                  |
-                  ↓
-  SHAP + Smartcare_Preprocessor.joblib
-                  |
-                  ↓
-          Result back to UI
+│
+├── data/
+│ ├── processed/
+│ └── raw/
+│
+├── models/
+│
+│
+├── reports/
+│ │
+│ ├── KNN/
+│ │
+│ └── Logistic_Regression/
+│
+├── src/
+│ │
+│ ├── preprocessing/
+│ │ ├── CleanData.py
+│ │ ├── LoadData.py
+│ │ ├── preprocess.py
+│ │ └── SaveObjects.py
+│ │
+│ ├── training/
+│ │ ├── evaluate.py
+│ │ └── train.py
+│ │
+│ └── utils/
+│ └── mlflow_tracker.py
+│ └── path.py
+│
+├── main.py
+└── requirements.txt
 ```
 
-# THANK YOU !!
+
+## Contributor
+
+- [Binara Wijewickrama]()
