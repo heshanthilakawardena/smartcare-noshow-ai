@@ -1,6 +1,8 @@
-from flask import Flask, request, jsonify, render_template
+import webbrowser
+import threading
+import time
 import pandas as pd
-
+from flask import Flask, request, jsonify, render_template
 from model_loader import (
     models,
     preprocessor,
@@ -168,6 +170,13 @@ def predict():
 
         }), 500
 
+def open_browser():
+
+    time.sleep(2)
+
+    webbrowser.open(
+        "http://127.0.0.1:5000"
+    )
 
 # ==================================
 # Run Flask
@@ -177,8 +186,13 @@ if __name__ == "__main__":
 
     print("🚀 Starting SmartCare Web Server...")
 
+    threading.Thread(
+        target=open_browser
+    ).start()
+
     app.run(
         host="127.0.0.1",
         port=5000,
-        debug=True
+        debug=True,
+        use_reloader=False
     )
