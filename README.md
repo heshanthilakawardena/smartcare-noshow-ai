@@ -21,50 +21,60 @@ Our AI powered prediction system uses Machine Learning models to identify patien
   ```
   python app.py
   ```
-### Suported Models
+### Available Models
 - Logistic Regression
 - KNN
 - XGBosst
 - Random Forest
 - Desicion Tree
 
-### Application Work Flow
+### Agent Console Wrokflow
 ```
-                 User
-                  |
-                  |
-              Boostrap UI
-                  |
-          Select Model Dropdown
-                  |
-                  |
-            POST JSON Request
-                  |
-                  ↓
-            Flask API
-                  |
-        --------------------
-        |                  |
- Logistic Regression      KNN
-        |                  |
- Smartcare_Logistic     Smartcare_KNN
-        |                  |
-        --------------------
-                  |
-                  ↓
-      Smartcare_Preprocessor.joblib
-                  |
-                  ↓
-              Prediction
-                  |
-                  ↓
-  SHAP + Smartcare_Preprocessor.joblib
-                  |
-                  ↓
-          Result back to UI
+                         User
+                          |
+                          |
+                    Bootstrap UI
+                          |
+                          |
+              Select Model Dropdown
+                          |
+                          |
+                  POST JSON Request
+                          |
+                          ↓
+                      Flask API
+                          |
+                          ↓
+            Smartcare_Preprocessor.joblib
+      (Feature Engineering + Encoding + Scaling)
+                          |
+                          |
+        ------------------------------------------------
+        |              |             |          |        |
+        ↓              ↓             ↓          ↓        ↓
+    Logistic          KNN          XGBoost    Random   Decision
+   Regression                                 Forest    Tree
+        |              |             |          |        |
+        ↓              ↓             ↓          ↓        ↓
+Smartcare_       Smartcare_    Smartcare_  Smartcare_ Smartcare_
+Logistic         KNN           XGBoost     RF        DT
+        |              |             |          |        |
+        ------------------------------------------------
+                          |
+                          ↓
+                  Model Prediction
+                          |
+                          ↓
+             SHAP Explainability Layer
+                          |
+                          ↓
+        Feature Importance + Prediction Reason
+                          |
+                          ↓
+                    Result Back to UI
 ```
 
 ### Contibutors
-[Hehsan Thilakawadhana](https://github.com/heshanthilakawardena)
-[Zahra Ismail](https://github.com/Zahra-Ismail)
-[Binara Wijewickrama](https://github.com/binarays)
+- [Hehsan Thilakawadhana](https://github.com/heshanthilakawardena)
+- [Zahra Ismail](https://github.com/Zahra-Ismail)
+- [Binara Wijewickrama](https://github.com/binarays)
