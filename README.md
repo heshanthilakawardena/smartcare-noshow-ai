@@ -1,16 +1,20 @@
-# SmartCare Hospital AI
+SmartCare Hospital AI
+Our AI-powered prediction system uses Machine Learning models such as Decision Tree to identify patients who are more likely to miss their appointments before the scheduled date. It helps healthcare providers understand potential no-shows, take early actions such as reminders or follow-ups, and improve appointment management.
 
-Our AI-powered prediction system uses Machine Learning models such as Logistic Regression and K-Nearest Neighbors (KNN) to identify patients who are more likely to miss their appointments before the scheduled date. It helps healthcare providers understand potential no-shows, take early actions such as reminders or follow-ups, and improve appointment management.
+Task list
+[x] Training Decision Tree model
 
-### Task list
-- [x] Training Logistic Regression model
-- [x] Training KNN model
-- [X] Track both model using `MlFlow`
-- [x] Save Model Artifacts in [**Dagshub**](https://dagshub.com/heshan.thilakawardena/smartcare-noshow-ai/experiments)
-- [ ] Data versioning using `dvc`
-- [x] `SHAP` implement for Explanations
-- [x] Frountend using `Boostrap` + `Flask`
-- [x] `exe` Ready
+[X] Track model using MLflow
+
+[x] Save Model Artifacts in [**Dagshub**](https://dagshub.com/heshan.thilakawardena/smartcare-noshow-ai/experiments)
+
+[ ] Data versioning using dvc
+
+[x] SHAP implement for Explanations
+
+[x] Frontend using Bootstrap + Flask
+
+[x] exe Ready
 
 ### Usage
 - Download Code
@@ -22,30 +26,22 @@ Our AI-powered prediction system uses Machine Learning models such as Logistic R
   ```
   python app.py
   ```
-
-# Logistic Regression Model
-
-### Confusion Matrix
-![Model Confustion mattrix](training/logistic_and_knn/reports/Logistic_Regression/confusion_matrix.png)
-
-### ROC
-![Model Confustion mattrix](training/logistic_and_knn/reports/Logistic_Regression/roc_curve.png)
-
-# KNN Model
+  
+Decision Tree Model
 
 ### Confusion Matrix
-![Model Confustion mattrix](training/logistic_and_knn/reports/KNN/confusion_matrix.png)
+![Model Confustion mattrix](training/DecisionTree/reports/confusion_matrix.png)
 
 ### ROC
-![Model Confustion mattrix](training/logistic_and_knn/reports/KNN/roc_curve.png)
+![Model Confustion mattrix](training/DecisionTree/reports/roc_curve.png)
 
-# System Architecture
 
-```
+
+System Architecture
                  User
                   |
                   |
-              Boostrap UI
+             Bootstrap UI
                   |
         Select Model Dropdown
                   |
@@ -53,15 +49,12 @@ Our AI-powered prediction system uses Machine Learning models such as Logistic R
         POST JSON Request
                   |
                   ↓
-            Flask API
+              Flask API
                   |
-        --------------------
-        |                  |
- Logistic Regression      KNN
-        |                  |
- Smartcare_Logistic     Smartcare_KNN
-        |                  |
-        --------------------
+                  |
+            Decision Tree
+                  |
+          Smartcare_DecisionTree
                   |
                   ↓
       Smartcare_Preprocessor.joblib
@@ -73,7 +66,5 @@ Our AI-powered prediction system uses Machine Learning models such as Logistic R
   SHAP + Smartcare_Preprocessor.joblib
                   |
                   ↓
-          Result back to UI
-```
-
-# THANK YOU !!
+         Result back to UI
+THANK YOU !!
