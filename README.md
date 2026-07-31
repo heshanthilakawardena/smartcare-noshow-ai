@@ -1,6 +1,6 @@
-# SmartCare Ai Console Developer
+# SmartCare Agent Console Developer
 
-Hi, I’m Binara. I am responsible for training and implementing the **Logistic Regression** and **K-Nearest Neighbors (KNN)** models for this project. I also developed the **Flask server** to connect the **Machine Learning models** with the application and worked on the client side development to provide a user friendly interface.
+Hi, I’m [Binara](https://github.com/binarays). I am responsible for training and implementing the **Logistic Regression** and **K-Nearest Neighbors (KNN)** models for this project. I also developed the **Flask server** to connect the **Machine Learning models** with the application and worked on the client side development to provide a user friendly interface.
 
 ### Task list
 - [x] Training Logistic Regression model
@@ -79,4 +79,4 @@ Hi, I’m Binara. I am responsible for training and implementing the **Logistic 
 
 ## Contributor
 
-- [Binara Wijewickrama]()
+- [Binara Wijewickrama](https://github.com/binarays)
