@@ -3,7 +3,8 @@ from pathlib import Path
 from utils.server_path import (
     LOGISTIC_MODEL_PATH,
     KNN_MODEL_PATH,
-    PREPROCESSOR_PATH
+    PREPROCESSOR_PATH,
+    SHAP_BACKGROUND_PATH
 )
 
 # ==========================
@@ -44,3 +45,7 @@ preprocessor = joblib.load(
 
 
 print("✅ Preprocessor Loaded")
+
+background_data = joblib.load(
+    SHAP_BACKGROUND_PATH
+)

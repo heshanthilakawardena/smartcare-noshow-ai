@@ -179,22 +179,22 @@ function appendResultBubble(data, container) {
         circleRiskText.style.color = 'var(--risk-high)';
         circleRiskText.textContent = 'HIGH';
         statusTitle.classList.add('high');
-        statusTitle.textContent = 'High Risk 🚨';
-        desc.textContent = 'High Risk — Patient will likely not attend. Follow-up recommended.';
+        statusTitle.textContent = 'Risk is High';
+        desc.textContent = 'Patient will likely not attend the clinic. Follow up recommended.';
     } else if (data.risk === 'Medium Risk') {
         circleProgress.style.stroke = 'var(--risk-medium)';
         circleRiskText.style.color = 'var(--risk-medium)';
         circleRiskText.textContent = 'MEDIUM';
         statusTitle.classList.add('medium');
-        statusTitle.textContent = 'Medium Risk ⚠️';
-        desc.textContent = 'Medium Risk — Patient rarely comes.';
+        statusTitle.textContent = 'Risk is Medium';
+        desc.textContent = 'Patient rarely attends the clinic.';
     } else {
         circleProgress.style.stroke = 'var(--risk-low)';
         circleRiskText.style.color = 'var(--risk-low)';
         circleRiskText.textContent = 'LOW';
         statusTitle.classList.add('low');
-        statusTitle.textContent = 'Low Risk ✅';
-        desc.textContent = 'Low Risk — Patient generally attends the clinic.';
+        statusTitle.textContent = 'Risk is Low';
+        desc.textContent = 'Patient generally attends the clinic.';
     }
 
     // SHAP Explainable AI Results
