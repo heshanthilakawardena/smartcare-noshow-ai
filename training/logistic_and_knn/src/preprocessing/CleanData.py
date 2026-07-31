@@ -21,6 +21,7 @@ def CleanData(df):
         "record_id",
         "appointment_status",
         "admitted",
+        "blood_group",
         "room_type",
         "length_of_stay_days",
         "previous_admissions",
@@ -33,7 +34,7 @@ def CleanData(df):
         "payment_status",
         "payment_method",
         "readmitted_30_days",
-        "disease_risk_level"
+        "disease_risk_level",
         "systolic_bp",
         "diastolic_bp",
         "blood_sugar_mg_dl",
