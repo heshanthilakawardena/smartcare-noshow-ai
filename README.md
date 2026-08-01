@@ -7,7 +7,7 @@ Hi, I’m [Binara](https://github.com/binarays). I am responsible for training a
 - [x] Training KNN model
 - [X] Track both model using `MlFlow`
 - [x] Save Model Artifacts in [**Dagshub**](https://dagshub.com/heshan.thilakawardena/smartcare-noshow-ai/experiments)
-- [ ] Data versioning using `dvc`
+- [x] Dataset uploaded into Dagshub
 - [x] `SHAP` implement for Explanations
 - [x] Frountend using `Boostrap` + `Flask`
 - [ ] `exe` Ready
