@@ -282,9 +282,9 @@ body.light-theme .user .chat-sender-name {
     }
 }
 
-/* ====================================================
+/* 
    FORM LAYOUT (Progressive Linear Row) INSIDE CHAT
-   ==================================================== */
+   */
 #prediction-form {
     margin: 0;
 }
@@ -446,9 +446,7 @@ body.light-theme select.form-control option {
     }
 }
 
-/* ====================================================
-   FLOATING ACTION BAR (Bottom Center)
-   ==================================================== */
+/* FLOATING ACTION BAR (Bottom Center)*/
 .floating-controls-container {
     position: fixed;
     bottom: 20px;
@@ -564,9 +562,7 @@ body.light-theme select.form-control option {
     color: var(--risk-high);
 }
 
-/* ====================================================
-   AGENT LOADING TYPING INDICATOR
-   ==================================================== */
+/* AGENT LOADING TYPING INDICATOR */
 .loading-bubble {
     display: flex;
     flex-direction: column;
@@ -619,9 +615,7 @@ body.light-theme select.form-control option {
     }
 }
 
-/* ====================================================
-   AGENT RESULT BUBBLE
-   ==================================================== */
+/* AGENT RESULT BUBBLE*/
 .result-bubble {
     min-width: 450px;
 }

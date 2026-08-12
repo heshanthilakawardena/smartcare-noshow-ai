@@ -1,43 +1,18 @@
-import subprocess
 import os
 import sys
 
-def resource_path(relative_path):
 
-    try:
-        base_path = sys._MEIPASS
+server_dir = os.path.join(os.path.dirname(__file__), "server")
+if server_dir not in sys.path:
+    sys.path.insert(0, server_dir)
 
-    except Exception:
-        base_path = os.path.abspath(".")
-
-    return os.path.join(
-        base_path,
-        relative_path
-    )
-
-
-def start_server():
-
-    server_path = resource_path(
-        os.path.join(
-            "server",
-            "flask_server.py"
-        )
-    )
-
-    print(
-        "SMARTCARE FLASK SERVER\n"
-        "+ Starting SmartCare Flask Server..."
-    )
-
-    subprocess.run(
-        [
-            sys.executable,
-            server_path
-        ]
-    )
-
+# Import the 'app' object from server/flask_server.py
+try:
+    from flask_server import app
+except ImportError:
+    from server.flask_server import app
 
 if __name__ == "__main__":
-
-    start_server()
+    port = int(os.environ.get("PORT", 8080))
+    print(f"SMARTCARE FLASK SERVER\n+ Starting SmartCare Flask Server on port {port}...")
+    app.run(host="0.0.0.0", port=port)

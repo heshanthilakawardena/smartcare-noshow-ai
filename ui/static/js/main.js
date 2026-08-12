@@ -1,6 +1,4 @@
-/* ==========================================================================
-   SmartCare Hospital AI - Chat Controller
-   ========================================================================== */
+/* SmartCare Hospital AI - Chat Controller */
 
 document.addEventListener('DOMContentLoaded', () => {
     initTheme();
