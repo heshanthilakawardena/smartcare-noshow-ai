@@ -1,45 +1,51 @@
+import os
 import webbrowser
 import threading
 import time
 import pandas as pd
 from flask import Flask, request, jsonify, render_template
-from model_loader import (
-    models,
-    preprocessor,
-    background_data
-)
+from model_loader import ( models, preprocessor, background_data)
 from shapAI import explain_prediction
-from utils.server_path import (
-    TEMPLATE_PATH,
-    STATIC_PATH
-)
+from utils.server_path import ( TEMPLATE_PATH, STATIC_PATH)
 
 
-# ==================================
 # Flask Configuration
-# ==================================
-
 app = Flask(
     __name__,
     template_folder=str(TEMPLATE_PATH),
     static_folder=str(STATIC_PATH)
 )
 
-
-# ==================================
-# Home Page
-# ==================================
-
+# Flask app ui
 @app.route("/")
 def home():
 
     return render_template("index.html")
 
+# Browser session tracker for the tab is runing or not
+last_heartbeat = time.time()
 
-# ==================================
-# Prediction API
-# ==================================
 
+@app.route("/heartbeat", methods=["POST"])
+def heartbeat():
+
+    global last_heartbeat
+    last_heartbeat = time.time()
+    return "", 204
+
+
+def monitor_browser():
+
+    global last_heartbeat
+    while True:
+        time.sleep(3)
+        if time.time() - last_heartbeat > 10:
+
+            print("Browser closed. Shutting down SmartCare...")
+
+            os._exit(0)
+
+# Prediction API route
 @app.route(
     "/predict",
     methods=["POST"]
@@ -49,10 +55,6 @@ def predict():
     try:
 
         data = request.json
-
-        # -------------------------
-        # Select Model
-        # -------------------------
 
         model_name = data.pop(
             "model",
@@ -69,16 +71,9 @@ def predict():
 
         print(f"Using model : {model_name}")
 
-        # -------------------------
-        # Create DataFrame
-        # -------------------------
-
         input_df = pd.DataFrame([data])
 
-        # -------------------------
         # Feature Engineering
-        # -------------------------
-
         input_df["appointment_date"] = pd.to_datetime(
             input_df["appointment_date"]
         )
@@ -108,18 +103,12 @@ def predict():
             inplace=True
         )
 
-        # -------------------------
         # Preprocessing
-        # -------------------------
-
         processed = preprocessor.transform(
             input_df
         )
 
-        # -------------------------
         # Prediction
-        # -------------------------
-
         probability = model.predict_proba(
             processed
         )[0][1]
@@ -128,10 +117,7 @@ def predict():
             processed
         )[0]
 
-        # -------------------------
         # SHAP
-        # -------------------------
-
         explanation = explain_prediction(
             model,
             model_name,
@@ -143,51 +129,43 @@ def predict():
         return jsonify({
 
             "model": model_name,
-
             "prediction": int(prediction),
-
             "probability": float(probability),
-
             "risk": (
-                "High Risk"
+                "Skip the appointment"
                 if probability >= 0.65
                 else
-                "Medium Risk"
+                "Probable to skip the appointment"
                 if probability >= 0.40
                 else
-                "Low Risk"
+                "Attend the appointment"
             ),
-
             "explanation": explanation
-
         })
 
     except Exception as e:
 
         return jsonify({
-
             "error": str(e)
-
         }), 500
 
 def open_browser():
-
     time.sleep(2)
-
     webbrowser.open(
         "http://127.0.0.1:5000"
     )
 
-# ==================================
-# Run Flask
-# ==================================
-
 if __name__ == "__main__":
 
-    print("🚀 Starting SmartCare Web Server...")
+    print("Starting SmartCare Web Server...")
 
     threading.Thread(
         target=open_browser
+    ).start()
+
+    threading.Thread(
+        target=monitor_browser,
+        daemon=True
     ).start()
 
     app.run(

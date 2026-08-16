@@ -1,17 +1,11 @@
-/* ==========================================================================
-   SmartCare Hospital AI - Chat Controller
-   ========================================================================== */
-
 document.addEventListener('DOMContentLoaded', () => {
     initTheme();
 
-    // Set default appointment date to today
     const dateInput = document.getElementById('appointment_date');
     if (dateInput && !dateInput.value) {
         dateInput.value = new Date().toISOString().split('T')[0];
     }
-
-    // Attach external floating predict button to form submission
+    
     const submitBtnExt = document.getElementById('btn-submit-external');
     const form = document.getElementById('prediction-form');
 
@@ -26,7 +20,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Quick Fill Demo Data Button Listener
     const demoBtn = document.getElementById('btn-fill-demo');
     if (demoBtn) {
         demoBtn.addEventListener('click', fillDemoData);
@@ -141,12 +134,12 @@ async function handlePrediction(e) {
     } catch (err) {
         const loadingMsgEl = document.getElementById('loading-message');
         if (loadingMsgEl) loadingMsgEl.remove();
-        showErrorBubble('❌ Server connection error. Please ensure Flask server is running.', insertionPoint);
+        showErrorBubble(' Server connection error. Please ensure Flask server is running.', insertionPoint);
     } finally {
         // Reset UI Loading State
         submitBtn.classList.remove('loading');
         spinner.style.display = 'none';
-        btnText.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Predict No-Show Risk';
+        btnText.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Predict Now';
 
         // Re-enable inputs
         document.querySelectorAll('#prediction-form input, #prediction-form select').forEach(el => el.disabled = false);
@@ -174,26 +167,26 @@ function appendResultBubble(data, container) {
     const statusTitle = resultNode.querySelector('.result-status-title');
     const desc = resultNode.querySelector('.result-description');
 
-    if (data.risk === 'High Risk') {
+    if (data.risk === 'Skip the appointment') {
         circleProgress.style.stroke = 'var(--risk-high)';
         circleRiskText.style.color = 'var(--risk-high)';
         circleRiskText.textContent = 'HIGH';
         statusTitle.classList.add('high');
-        statusTitle.textContent = 'Risk is High';
+        statusTitle.textContent = 'Skip the appointment';
         desc.textContent = 'Patient will likely not attend the clinic. Follow up recommended.';
-    } else if (data.risk === 'Medium Risk') {
+    } else if (data.risk === 'Probable to skip the appointment') {
         circleProgress.style.stroke = 'var(--risk-medium)';
         circleRiskText.style.color = 'var(--risk-medium)';
         circleRiskText.textContent = 'MEDIUM';
         statusTitle.classList.add('medium');
-        statusTitle.textContent = 'Risk is Medium';
+        statusTitle.textContent = 'Probable to skip the appointment';
         desc.textContent = 'Patient rarely attends the clinic.';
     } else {
         circleProgress.style.stroke = 'var(--risk-low)';
         circleRiskText.style.color = 'var(--risk-low)';
         circleRiskText.textContent = 'LOW';
         statusTitle.classList.add('low');
-        statusTitle.textContent = 'Risk is Low';
+        statusTitle.textContent = 'Attend the appointment';
         desc.textContent = 'Patient generally attends the clinic.';
     }
 
@@ -272,3 +265,12 @@ function fillDemoData() {
     document.getElementById('missed_previous_appointments').value = 2;
     document.getElementById('consultation_fee_lkr').value = 2500;
 }
+
+setInterval(() => {
+    fetch('/heartbeat', {
+        method: 'POST',
+        keepalive: true
+    }).catch(() => {
+        // Ignore heartbeat errors
+    });
+}, 2000);

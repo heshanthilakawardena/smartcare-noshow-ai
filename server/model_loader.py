@@ -1,6 +1,4 @@
 import joblib
-from pathlib import Path
-import xgboost
 from utils.server_path import (
     LOGISTIC_MODEL_PATH,
     KNN_MODEL_PATH,
@@ -11,18 +9,14 @@ from utils.server_path import (
     SHAP_BACKGROUND_PATH
 )
 
-# ==========================
-# Load Models
-# ==========================
 
-print("Loading Models...")
+print("+Loading Models...")
 
 
 models = {
 
     "Logistic Regression":
         joblib.load(LOGISTIC_MODEL_PATH),
-
 
     "KNN":
         joblib.load(KNN_MODEL_PATH),
@@ -35,39 +29,33 @@ models = {
 
     "Decision Tree":
                 joblib.load(DISICION_TREE_MODEL_PATH)
-
 }
 
 
 
-print("✅ Logistic Regression Loaded")
+print("+ Logistic Regression Loaded")
 print("Classes:", models["Logistic Regression"].classes_)
 
-print("✅ KNN Loaded")
+print("+ KNN Loaded")
 print("Classes:", models["KNN"].classes_)
 
-print("✅ XGBoost Loaded")
+print("+ XGBoost Loaded")
 print("Classes:", models["XGBoost"].classes_)
 
-print("✅ Random Forest Loaded")
+print("+ Random Forest Loaded")
 print("Classes:", models["Random Forest"].classes_)
 
-print("✅ Decision Tree Loaded")
+print("+ Decision Tree Loaded")
 print("Classes:", models["Decision Tree"].classes_)
-
-
-# ==========================
-# Load Preprocessor
-# ==========================
 
 
 preprocessor = joblib.load(
     PREPROCESSOR_PATH
 )
 
-
-print("✅ Preprocessor Loaded")
+print("+ Preprocessor Loaded")
 
 background_data = joblib.load(
     SHAP_BACKGROUND_PATH
 )
+print("+ SHAP Background Data Loaded")
