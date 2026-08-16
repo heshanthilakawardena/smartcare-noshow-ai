@@ -26,10 +26,7 @@ https://smartcare-noshow-ai-601188730984.asia-southeast1.run.app/
 The SmartCare local AI deployment enables AI models and inference services to operate within the local environment. This approach provides greater control over data, enhanced privacy, reduced dependency on external services, and the ability to operate with lower latency or in environments with limited internet connectivity.
 
 ### Usage
-- Download Code
-  ```bash
-  git clone -b main --single-branch https://github.com/heshanthilakawardena/smartcare-noshow-ai.git
-  ```
+- [Download `SmarCare.zip`](https://github.com/heshanthilakawardena/smartcare-noshow-ai/releases/tag/v1.0)
 - Run the `SmartCare.exe`
 
 ### Deployment Flexibility
