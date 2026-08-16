@@ -167,26 +167,26 @@ function appendResultBubble(data, container) {
     const statusTitle = resultNode.querySelector('.result-status-title');
     const desc = resultNode.querySelector('.result-description');
 
-    if (data.risk === 'Skip the appointment') {
+    if (data.risk === 'High Risk') {
         circleProgress.style.stroke = 'var(--risk-high)';
         circleRiskText.style.color = 'var(--risk-high)';
         circleRiskText.textContent = 'HIGH';
         statusTitle.classList.add('high');
-        statusTitle.textContent = 'Skip the appointment';
+        statusTitle.textContent = 'High Probability of No-show';
         desc.textContent = 'Patient will likely not attend the clinic. Follow up recommended.';
-    } else if (data.risk === 'Probable to skip the appointment') {
+    } else if (data.risk === 'Medium Risk') {
         circleProgress.style.stroke = 'var(--risk-medium)';
         circleRiskText.style.color = 'var(--risk-medium)';
         circleRiskText.textContent = 'MEDIUM';
         statusTitle.classList.add('medium');
-        statusTitle.textContent = 'Probable to skip the appointment';
+        statusTitle.textContent = 'Medium Probability of No-show';
         desc.textContent = 'Patient rarely attends the clinic.';
     } else {
         circleProgress.style.stroke = 'var(--risk-low)';
         circleRiskText.style.color = 'var(--risk-low)';
         circleRiskText.textContent = 'LOW';
         statusTitle.classList.add('low');
-        statusTitle.textContent = 'Attend the appointment';
+        statusTitle.textContent = 'Low Probability of No-show';
         desc.textContent = 'Patient generally attends the clinic.';
     }
 

@@ -132,13 +132,13 @@ def predict():
             "prediction": int(prediction),
             "probability": float(probability),
             "risk": (
-                "Skip the appointment"
+                "High Risk"
                 if probability >= 0.65
                 else
-                "Probable to skip the appointment"
+                "Medium Risk"
                 if probability >= 0.40
                 else
-                "Attend the appointment"
+                "Low Risk"
             ),
             "explanation": explanation
         })
