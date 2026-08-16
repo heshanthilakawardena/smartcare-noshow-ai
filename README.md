@@ -20,6 +20,7 @@ The SmartCare cloud deployment provides a centralized, scalable, and highly acce
 ```URL
 https://smartcare-noshow-ai-601188730984.asia-southeast1.run.app/
 ```
+#### [**CLOUD DEPLOYMENT BRANCH**](https://github.com/heshanthilakawardena/smartcare-noshow-ai/tree/cloud-run-deployment)
 
 ### 2. Local AI Deployment
 
