@@ -15,22 +15,13 @@ def PrepareData(df, processed_data_path, model_path):
 
     print("\n+ Starting Data Preparation...\n")
 
-
-    # -----------------------------
     # Clean Column Names
-    # -----------------------------
-
     df.columns = (
         df.columns
         .str.strip()
     )
 
-
-
-    # -----------------------------
-    # Remove Unnecessary Columns
-    # -----------------------------
-
+    # Remove Unnecessary Columns if exist to secure the pipline
     remove_columns = [
         "patient_id",
         "record_id",
@@ -56,7 +47,6 @@ def PrepareData(df, processed_data_path, model_path):
         "cholesterol_mg_dl"
     ]
 
-
     df.drop(
 
         columns=[
@@ -68,19 +58,12 @@ def PrepareData(df, processed_data_path, model_path):
 
     )
 
-
-
-    # -----------------------------
     # Appointment Date Feature Engineering
-    # -----------------------------
-
-
     df["appointment_date"] = pd.to_datetime(
 
         df["appointment_date"]
 
     )
-
 
     df["appointment_year"] = (
 
@@ -89,14 +72,12 @@ def PrepareData(df, processed_data_path, model_path):
 
     )
 
-
     df["appointment_month"] = (
 
         df["appointment_date"]
         .dt.month
 
     )
-
 
     df["appointment_day"] = (
 
@@ -105,7 +86,6 @@ def PrepareData(df, processed_data_path, model_path):
 
     )
 
-
     df["appointment_dayofweek"] = (
 
         df["appointment_date"]
@@ -113,16 +93,11 @@ def PrepareData(df, processed_data_path, model_path):
 
     )
 
-
     df["appointment_weekend"] = (
 
         df["appointment_dayofweek"] >= 5
 
     ).astype(int)
-
-
-
-    # Remove original date
 
     df.drop(
 
@@ -132,12 +107,7 @@ def PrepareData(df, processed_data_path, model_path):
 
     )
 
-
-
-    # -----------------------------
     # Save Processed Dataset
-    # -----------------------------
-
     save_processed_data(
 
         df,
@@ -146,13 +116,7 @@ def PrepareData(df, processed_data_path, model_path):
 
     )
 
-
-
-    # -----------------------------
     # Split Features and Label
-    # -----------------------------
-
-
     X = df.drop(
 
         "Label",
@@ -171,13 +135,7 @@ def PrepareData(df, processed_data_path, model_path):
         y.value_counts()
     )
 
-
-
-    # -----------------------------
     # Encoding Columns
-    # -----------------------------
-
-
     onehot_columns = [
         "gender",
         "department",
@@ -192,18 +150,11 @@ def PrepareData(df, processed_data_path, model_path):
 
     ]
 
-    # -----------------------------
     # Preprocessor
-    # -----------------------------
-
-
     preprocessor = ColumnTransformer(
 
         transformers=[
-
-
             (
-
                 "onehot",
 
                 OneHotEncoder(
@@ -213,80 +164,44 @@ def PrepareData(df, processed_data_path, model_path):
                 ),
 
                 onehot_columns
-
             ),
 
             (
-
                 "numeric",
 
                 StandardScaler(),
 
                 numeric_columns
-
             )
-
         ]
-
     )
 
-
-
-    # -----------------------------
     # Train Test Split
-    # -----------------------------
-
-
     X_train, X_test, y_train, y_test = train_test_split(
-
         X,
-
         y,
-
         test_size=0.2,
-
         random_state=42,
-
         stratify=y
-
     )
 
-
-
-    # -----------------------------
     # Fit preprocessing ONLY TRAIN
-    # -----------------------------
-
-
     X_train = preprocessor.fit_transform(
-
         X_train
-
     )
-
-
     X_test = preprocessor.transform(
 
         X_test
 
     )
 
-
-
-    # -----------------------------
     # Save Preprocessor
-    # -----------------------------
-
-
     model_path = Path(model_path)
 
 
     model_path.mkdir(
-
         parents=True,
-
         exist_ok=True
-
     )
 
     joblib.dump(
@@ -297,68 +212,36 @@ def PrepareData(df, processed_data_path, model_path):
     joblib.dump(
 
         preprocessor,
-
         model_path / "Smartcare_Preprocessor.joblib"
 
     )
 
-
-
-    print(
-        "\n+ Data Preparation Completed"
-    )
-
-
+    print("\n+ Data Preparation Completed")
 
     return (
-
         X_train,
-
         X_test,
-
         y_train,
-
         y_test,
-
         preprocessor,
-
         X,
-
         y
-
     )
-
-
-
-
 
 def save_processed_data(df, path):
 
-
     path = Path(path)
-
-
     path.mkdir(
-
         parents=True,
-
         exist_ok=True
-
     )
 
 
 
     df.to_csv(
-
         path /
-
         "smartcare_processed_dataset.csv",
-
         index=False
-
     )
 
-
-    print(
-        "+ Processed dataset saved"
-    )
+    print("+ Processed dataset saved")

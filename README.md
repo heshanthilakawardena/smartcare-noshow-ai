@@ -10,16 +10,16 @@ Hi, I’m [Binara](https://github.com/binarays). I am responsible for training a
 - [x] Dataset uploaded into Dagshub
 - [x] `SHAP` implement for Explanations
 - [x] Frountend using `Boostrap` + `Flask`
-- [ ] `exe` Ready
+- [x] `exe` Ready
 
 ### For Developers
 - Download Code
 - Install Esenntial libraries      
-  ```
+  ```bash
   pip install requirements.txt
   ```
 - Start Training
-  ```
+  ```bash
   python main.py
   ```
 
@@ -75,7 +75,6 @@ Hi, I’m [Binara](https://github.com/binarays). I am responsible for training a
 ├── main.py
 └── requirements.txt
 ```
-
 
 ## Contributor
 

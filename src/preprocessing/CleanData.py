@@ -14,7 +14,7 @@ def CheckData(df):
 
 def CleanData(df):
 
-    # Drop columns that are not needed for Option A
+    # Drop columns that are not needed
     df.drop(
         columns = [
         "patient_id",

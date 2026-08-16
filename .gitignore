@@ -11,7 +11,7 @@ venv/
 .idea/
 
 # Data
-processed/
+data/
 *.csv
 models/
 *.joblib

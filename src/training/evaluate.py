@@ -19,7 +19,6 @@ from pathlib import Path
 def EvaluateModel(model, model_name, X_test, y_test, report_path):
 
     report_path = Path(report_path)
-
     report_path.mkdir(
         parents=True,
         exist_ok=True
@@ -69,8 +68,6 @@ def EvaluateModel(model, model_name, X_test, y_test, report_path):
         y_prob
     )
 
-
-
     metrics = {
 
         "accuracy": accuracy,
@@ -86,12 +83,7 @@ def EvaluateModel(model, model_name, X_test, y_test, report_path):
     print(f"F1 Score : {f1:.4f}")
     print(f"ROC-AUC  : {roc_auc:.4f}")
 
-
-
-    # -----------------------------
     # Save Metrics
-    # -----------------------------
-
     with open(report_path / "model_metrics.txt","w") as f:
 
         f.write(f"========== {model_name} Evaluation ==========\n\n")
@@ -101,13 +93,10 @@ def EvaluateModel(model, model_name, X_test, y_test, report_path):
             )
 
     # Classification Report
-
     report = classification_report(
 
         y_test,
-
         y_pred,
-
         target_names=[
             "Attended",
             "No Show"
@@ -121,7 +110,6 @@ def EvaluateModel(model, model_name, X_test, y_test, report_path):
         f.write(report)
 
     # Confusion Matrix
-
     cm = confusion_matrix(
 
         y_test,
@@ -130,14 +118,11 @@ def EvaluateModel(model, model_name, X_test, y_test, report_path):
 
     )
 
-
-
     plt.figure(
 
         figsize=(6,5)
 
     )
-
 
     sns.heatmap(
 
@@ -159,39 +144,28 @@ def EvaluateModel(model, model_name, X_test, y_test, report_path):
         "Predicted"
     )
 
-
     plt.ylabel(
         "Actual"
     )
-
 
     plt.title(
         f"{model_name} - Confusion Matrix"
     )
 
-
     plt.tight_layout()
-
 
     plt.savefig(
         report_path / "confusion_matrix.png",
         dpi=300
-
     )
-
 
     plt.close()
 
 
 
-    print("✅ Confusion Matrix saved")
+    print("+ Confusion Matrix saved")
 
-
-
-    # -----------------------------
     # ROC Curve
-    # -----------------------------
-
     fpr, tpr, _ = roc_curve(
         y_test,
         y_prob
@@ -228,7 +202,6 @@ def EvaluateModel(model, model_name, X_test, y_test, report_path):
     plt.legend(
 
         loc="lower right"
-
     )
 
     plt.tight_layout()
@@ -238,13 +211,11 @@ def EvaluateModel(model, model_name, X_test, y_test, report_path):
         dpi=300
     )
 
-
     plt.close()
 
 
 
-    print("✅ ROC Curve saved")
-
+    print("+ ROC Curve saved")
 
     return metrics
 
@@ -255,7 +226,7 @@ def EvaluateLogisticRegression(
         X_test,
         y_test,
         report_path
-):
+    ):
 
     return EvaluateModel(
 
@@ -264,7 +235,6 @@ def EvaluateLogisticRegression(
         X_test,
         y_test,
         report_path
-
     )
 
 
@@ -274,7 +244,7 @@ def EvaluateKNN(
         X_test,
         y_test,
         report_path
-):
+    ):
 
     return EvaluateModel(
         model,
