@@ -106,11 +106,6 @@ body.chat-mode {
     gap: 10px;
 }
 
-.brand-icon {
-    font-size: 1.5rem;
-    color: var(--accent);
-}
-
 .brand-name {
     font-size: 1.25rem;
     font-weight: 700;
