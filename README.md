@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="assets/1.png" alt="banner" width="100%">
+  <img src="assets/2.jpg" alt="banner" width="100%">
 </p>
 
 # SmartCare Cloud Deployment Architecture
