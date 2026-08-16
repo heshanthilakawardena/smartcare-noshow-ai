@@ -172,28 +172,30 @@ function appendResultBubble(data, container) {
     const statusTitle = resultNode.querySelector('.result-status-title');
     const desc = resultNode.querySelector('.result-description');
 
-    if (data.risk === 'High Risk') {
-        circleProgress.style.stroke = 'var(--risk-high)';
-        circleRiskText.style.color = 'var(--risk-high)';
-        circleRiskText.textContent = 'HIGH';
-        statusTitle.classList.add('high');
-        statusTitle.textContent = 'Risk is High';
-        desc.textContent = 'Patient will likely not attend the clinic. Follow up recommended.';
-    } else if (data.risk === 'Medium Risk') {
-        circleProgress.style.stroke = 'var(--risk-medium)';
-        circleRiskText.style.color = 'var(--risk-medium)';
-        circleRiskText.textContent = 'MEDIUM';
-        statusTitle.classList.add('medium');
-        statusTitle.textContent = 'Risk is Medium';
-        desc.textContent = 'Patient rarely attends the clinic.';
-    } else {
-        circleProgress.style.stroke = 'var(--risk-low)';
-        circleRiskText.style.color = 'var(--risk-low)';
-        circleRiskText.textContent = 'LOW';
-        statusTitle.classList.add('low');
-        statusTitle.textContent = 'Risk is Low';
-        desc.textContent = 'Patient generally attends the clinic.';
-    }
+    if (data.risk === 'High Probability of No-show') {
+    circleProgress.style.stroke = 'var(--risk-high)';
+    circleRiskText.style.color = 'var(--risk-high)';
+    circleRiskText.textContent = 'HIGH';
+    statusTitle.className = 'result-status-title high';
+    statusTitle.textContent = 'High Probability of No-show';
+    desc.textContent = 'Patient will likely not attend the clinic. Follow up recommended.';
+
+} else if (data.risk === 'Moderate Probability of No-show') {
+    circleProgress.style.stroke = 'var(--risk-medium)';
+    circleRiskText.style.color = 'var(--risk-medium)';
+    circleRiskText.textContent = 'MEDIUM';
+    statusTitle.className = 'result-status-title medium';
+    statusTitle.textContent = 'Moderate Probability of No-show';
+    desc.textContent = 'Patient rarely attends the clinic.';
+
+} else {
+    circleProgress.style.stroke = 'var(--risk-low)';
+    circleRiskText.style.color = 'var(--risk-low)';
+    circleRiskText.textContent = 'LOW';
+    statusTitle.className = 'result-status-title low';
+    statusTitle.textContent = 'Low Probability of No-show';
+    desc.textContent = 'Patient generally attends the clinic.';
+}
 
     // SHAP Explainable AI Results
     const shapList = resultNode.querySelector('.chat-shap-list');

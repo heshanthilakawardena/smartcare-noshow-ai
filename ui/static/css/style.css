@@ -97,7 +97,11 @@ body.chat-mode {
     z-index: 100;
     flex-shrink: 0;
 }
-
+.brand-icon {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+}
 .nav-brand {
     display: flex;
     align-items: center;

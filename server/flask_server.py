@@ -95,9 +95,9 @@ def predict():
             "prediction": int(prediction),
             "probability": float(probability),
             "risk": (
-                "High Risk" if probability >= 0.65
-                else "Medium Risk" if probability >= 0.40
-                else "Low Risk"
+                "High Probability of No-show" if probability >= 0.65
+                else "Moderate Probability of No-show" if probability >= 0.40
+                else "Low Probability of No-show"
             ),
             "explanation": explanation
         })
