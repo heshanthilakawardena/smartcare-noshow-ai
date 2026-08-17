@@ -32,7 +32,7 @@ python main.py
 # Decision Tree Model
 
 ### Confusion Matrix
-![Model Confusion matrix](training/DecisionTree/reports/confusion_matrix.png)
+![Model Confusion matrix](reports/confusion_matrix.png)
 
 ### ROC
 ![Model ROC curve](training/DecisionTree/reports/roc_curve.png)
