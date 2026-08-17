@@ -35,7 +35,7 @@ python main.py
 ![Model Confusion matrix](reports/confusion_matrix.png)
 
 ### ROC
-![Model ROC curve](training/DecisionTree/reports/roc_curve.png)
+![Model ROC curve](reports/roc_curve.png)
 
 # Folder Structure
 
