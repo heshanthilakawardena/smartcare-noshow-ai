@@ -25,10 +25,10 @@ models = {
         joblib.load(XGBOOST_MODEL_PATH),
 
     "Random Forest":
-            joblib.load(RANDOM_FOREST_MODEL_PATH),
+        joblib.load(RANDOM_FOREST_MODEL_PATH),
 
     "Decision Tree":
-                joblib.load(DISICION_TREE_MODEL_PATH)
+        joblib.load(DISICION_TREE_MODEL_PATH)
 }
 
 
