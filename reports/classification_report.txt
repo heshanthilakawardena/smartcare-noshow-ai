@@ -1,0 +1,8 @@
+              precision    recall  f1-score   support
+
+    Attended       0.51      0.41      0.45       101
+     No Show       0.50      0.61      0.55        99
+
+    accuracy                           0.51       200
+   macro avg       0.51      0.51      0.50       200
+weighted avg       0.51      0.51      0.50       200
