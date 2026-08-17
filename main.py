@@ -108,7 +108,7 @@ def TrainingPipeline():
     )
 
 
-    print("✅ Preprocessor saved\n")
+    print("+ Preprocessor saved\n")
 
     print(
         "-----------------------------\n"

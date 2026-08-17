@@ -58,7 +58,7 @@ def PrepareData(df, processed_data_path, model_path):
 
     )
 
-    # Appointment Date Feature Engineering
+    # This is the date Feature Engineering
     df["appointment_date"] = pd.to_datetime(
 
         df["appointment_date"]

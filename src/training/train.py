@@ -91,7 +91,7 @@ def TrainKNN(X_train, y_train, model_path):
     # Load existing model
     if model_file.exists():
 
-        print("✅ KNN model already exists.")
+        print("+ KNN model already exists.")
         print("Loading saved model...")
 
         model = joblib.load(
