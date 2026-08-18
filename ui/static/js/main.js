@@ -139,12 +139,12 @@ async function handlePrediction(e) {
     } catch (err) {
         const loadingMsgEl = document.getElementById('loading-message');
         if (loadingMsgEl) loadingMsgEl.remove();
-        showErrorBubble('❌ Server connection error. Please ensure Flask server is running.', insertionPoint);
+        showErrorBubble('Server connection error. Please ensure Flask server is running.', insertionPoint);
     } finally {
         // Reset UI Loading State
         submitBtn.classList.remove('loading');
         spinner.style.display = 'none';
-        btnText.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Predict No-Show Risk';
+        btnText.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Predict Now';
 
         // Re-enable inputs
         document.querySelectorAll('#prediction-form input, #prediction-form select').forEach(el => el.disabled = false);
