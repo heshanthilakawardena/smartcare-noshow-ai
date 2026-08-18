@@ -43,8 +43,6 @@ def TrainDecisionTree(X_train, y_train, model_path):
         max_depth=5, 
         min_samples_leaf=20, 
         min_samples_split=10, 
-        max_features="sqrt", 
-        ccp_alpha=0.001,  
         random_state=42
 
     )
